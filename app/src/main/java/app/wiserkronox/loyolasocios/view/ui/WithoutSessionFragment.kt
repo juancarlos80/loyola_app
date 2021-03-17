@@ -5,8 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import app.wiserkronox.loyolasocios.R
+import com.google.android.gms.common.SignInButton
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -44,8 +47,26 @@ class WithoutSessionFragment : Fragment() {
             (activity as MainActivity)!!.goManualRegister()
         }
 
+        val btnGoogleSingin = root.findViewById<SignInButton>(R.id.btn_signin_google)
+        setGoogleButtonText( btnGoogleSingin, getString(R.string.btn_singin_google) )
+
+        btnGoogleSingin.setOnClickListener{
+            (activity as MainActivity)!!.signInGoogle()
+        }
+
         return root
     }
+
+    protected fun setGoogleButtonText(signInButton: SignInButton, buttonText: String?) {
+        for (i in 0 until signInButton.childCount) {
+            val v = signInButton.getChildAt(i)
+            if (v is TextView) {
+                v.text = buttonText
+                return
+            }
+        }
+    }
+
 
     companion object {
         /**
