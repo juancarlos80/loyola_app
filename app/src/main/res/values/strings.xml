@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Socio Loyola</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Textos del fragmento inicio de sesion -->
+    <string name="btn_singin_google">Iniciar con Google</string>
+    <string name="text_singin_options">Si estas registrado ingresa tu correo y clave</string>
+    <string name="hint_email">Correo Electrónico</string>
+    <string name="hint_password">Clave</string>
+    <string name="btn_login">Ingresar</string>
+    <string name="text_register">¿Todavia no tienes una cuenta?\n Registrate aquí</string>
+    <string name="btn_register">Registrar</string>
+    <string name="text_footer">Esta entidad esta supervisada por: </string>
+    <string name="content_logo_footer">Logotipo ASFI</string>
+    <string name="content_logo_loyola">Logotipo Cooperativa Loyola</string>
+
+    <!-- Textos del fragmento de registro manual -->
+    <string name="text_register_title">Registro de Socios</string>
+    <string name="text_email_label">Ingrese la dirección de su correo electrónico</string>
+    <string name="text_password_label">Ingrese su contraseña</string>
+    <string name="hint_email_1">Correo electrónico</string>
+    <string name="hint_email_2">Confirme su correo electrónico</string>
+    <string name="hint_password_1">Ingrese su Clave</string>
+    <string name="hint_password_2">Confirme la clave ingresada</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="btn_next">Continuar</string>
+
+</resources>
