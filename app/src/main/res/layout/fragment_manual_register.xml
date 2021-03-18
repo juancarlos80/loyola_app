@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/email_1"
+        android:id="@+id/edit_email_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -35,20 +35,6 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-    <EditText
-        android:id="@+id/email_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:ems="10"
-        android:hint="@string/hint_email_2"
-        android:inputType="textEmailAddress"
-        app:layout_constraintEnd_toEndOf="@+id/email_1"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/email_1"
-        app:layout_constraintTop_toBottomOf="@+id/email_1"
-        android:autofillHints="" />
 
     <TextView
         android:id="@+id/textView3"
@@ -65,13 +51,12 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
         android:text="@string/text_password_label"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_2" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_email_1" />
 
     <EditText
         android:id="@+id/edit_password_1"
@@ -94,7 +79,7 @@
         android:layout_marginTop="20dp"
         android:ems="10"
         android:inputType="textPassword"
-        android:hint="@string/hint_password_1"
+        android:hint="@string/hint_password_2"
         android:autofillHints="password"
         app:layout_constraintEnd_toEndOf="@+id/edit_password_1"
         app:layout_constraintHorizontal_bias="0.497"

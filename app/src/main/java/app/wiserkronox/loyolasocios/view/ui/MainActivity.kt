@@ -3,12 +3,18 @@ package app.wiserkronox.loyolasocios.view.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import app.wiserkronox.loyolasocios.R
 import app.wiserkronox.loyolasocios.lifecycle.MainObserver
+import app.wiserkronox.loyolasocios.service.LoyolaApplication
+import app.wiserkronox.loyolasocios.service.model.User
+import app.wiserkronox.loyolasocios.viewmodel.UserViewModel
+import app.wiserkronox.loyolasocios.viewmodel.UserViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -21,6 +27,10 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var mGoogleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
+
+    private val userViewModel: UserViewModel by viewModels {
+        UserViewModelFactory((application as LoyolaApplication).repository)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,7 +136,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     /*************************************************************************************/
-    //Funciones para ir al fragmento de interes
+    //Funciones para el inicio de sesion manual
+    /*************************************************************************************/
+    fun getUserByEmailPassword( email: String, password :String ){
+        goLoader()
+        userViewModel.getUserByEmail(email).observe(this){ user ->
+            if( user == null ){
+                goWithoutSession();
+                Toast.makeText(this, "No se encontro el usuario", Toast.LENGTH_SHORT).show()
+            } else {
+                goHomeWithEmail( user.email )
+            }
+        }
+
+    }
+
+    /*************************************************************************************/
+    //Funciones para ir al fragmento de interes u otra actividad
     /*************************************************************************************/
 
     fun goManualRegister( ){
@@ -142,4 +168,34 @@ class MainActivity : AppCompatActivity() {
             replace<WithoutSessionFragment>(R.id.fragment_container_view)
         }
     }
+
+    fun goLoader( ){
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace<LoadingFragment>(R.id.fragment_container_view)
+        }
+    }
+
+    // Funcion temporal del demo
+    fun  goListUsers(){
+        val intent = Intent(this@MainActivity, ListUserActivity::class.java)
+        startActivity(intent)
+    }
+
+    /***************************************************************************************/
+    // Funciones para el registro de usuarios
+    /***************************************************************************************/
+
+    fun registerManualUser( user: User){
+        userViewModel.insert( user )
+        goHomeWithEmail( user.email )
+    }
+
+    fun goHomeWithEmail( email: String ){
+        val intent = Intent(this@MainActivity,HomeActivity::class.java)
+        intent.putExtra("user_email",email)
+        startActivity(intent)
+        finish()
+    }
+
 }
