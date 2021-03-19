@@ -3,9 +3,16 @@ package app.wiserkronox.loyolasocios.service.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "user")
-class User () {
+class User () : Serializable {
+    companion object {
+        var REGISTER_LOGIN_STATE: String = "1"
+        var REGISTER_DATA_STATE: String = "2"
+        var DATA_COMPLETE_STATE: String = "3"
+    }
+
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 
@@ -50,7 +57,8 @@ class User () {
     var verification_code: String = ""
     @ColumnInfo
     var state: String = ""
-
+    @ColumnInfo
+    var phone_number: String = ""
 }
 
 

@@ -67,7 +67,7 @@ class ManualRegisterFragment : Fragment() {
         val user = User()
         user.email = email_1.text.toString()
         user.password = password_1.text.toString()
-
+        user.state = User.REGISTER_LOGIN_STATE
         (activity as MainActivity).registerManualUser( user )
     }
 

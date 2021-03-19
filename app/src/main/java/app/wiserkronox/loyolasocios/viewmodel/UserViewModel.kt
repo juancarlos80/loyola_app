@@ -17,6 +17,10 @@ class UserViewModel (private val repository: LoyolaRepository) : ViewModel() {
         repository.deleteAll()
     }
 
+    fun update(user: User) = viewModelScope.launch {
+        repository.update(user)
+    }
+
     fun getUserByEmail( email: String ) : LiveData<User>{
         return repository.getUserEmail(email).asLiveData()
     }

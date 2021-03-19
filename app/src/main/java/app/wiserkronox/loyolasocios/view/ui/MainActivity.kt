@@ -145,10 +145,18 @@ class MainActivity : AppCompatActivity() {
                 goWithoutSession();
                 Toast.makeText(this, "No se encontro el usuario", Toast.LENGTH_SHORT).show()
             } else {
-                goHomeWithEmail( user.email )
+                defineDestination( user )
             }
         }
+    }
 
+    fun defineDestination( user: User){
+        when( user.state ){
+            User.REGISTER_LOGIN_STATE -> goRegisterData( user )
+            //User.REGISTER_DATA_STATE -> goRegisterData( user )
+            User.DATA_COMPLETE_STATE -> goHomeWithEmail( user.email )
+            else -> goRegisterData( user )
+        }
     }
 
     /*************************************************************************************/
@@ -176,6 +184,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun goRegisterData( cUser: User){
+        val fragment = MyDataFragment.newInstance(cUser)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fragment_container_view,fragment)
+        //transaction.addToBackStack(null)
+        transaction.setReorderingAllowed(true)
+        transaction.commit()
+
+        /*supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace<fragment>(R.id.fragment_container_view)
+        }*/
+    }
+
     // Funcion temporal del demo
     fun  goListUsers(){
         val intent = Intent(this@MainActivity, ListUserActivity::class.java)
@@ -188,7 +210,12 @@ class MainActivity : AppCompatActivity() {
 
     fun registerManualUser( user: User){
         userViewModel.insert( user )
-        goHomeWithEmail( user.email )
+        defineDestination( user )
+    }
+
+    fun updateUser( user: User){
+        userViewModel.update( user )
+        defineDestination( user )
     }
 
     fun goHomeWithEmail( email: String ){

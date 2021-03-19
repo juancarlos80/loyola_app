@@ -24,4 +24,10 @@ class LoyolaRepository( private val userDao: UserDao ) {
     fun getUserEmail(email: String): Flow<User> {
         return userDao.getUserByEmail( email )
     }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun update(user: User){
+        userDao.update(user)
+    }
 }

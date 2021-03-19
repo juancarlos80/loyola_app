@@ -1,18 +1,20 @@
 package app.wiserkronox.loyolasocios.service.model
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 interface UserDao {
     @Query("select * from user order by names")
     fun getUsers(): Flow<List<User>>
 
-    @Insert( onConflict = OnConflictStrategy.IGNORE )
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(user: User)
+
+    @Update
+    suspend fun update(user: User?)
+
 
     @Query("select * from user where email = :email")
     fun getUserByEmail(email: String): Flow<User>

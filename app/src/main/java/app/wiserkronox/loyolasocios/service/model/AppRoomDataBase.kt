@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
     entities = arrayOf(
         User::class
     ),
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 
