@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.wiserkronox.loyolasocios">
 
+    <uses-feature android:name="android.hardware.camera.any" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:name=".service.LoyolaApplication"
         android:allowBackup="true"
@@ -10,10 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LoyolaSocios">
-        <activity
-            android:name=".view.ui.HomeActivity"
-            android:label="@string/title_activity_home"
-            android:theme="@style/Theme.LoyolaSocios.NoActionBar"></activity>
+        <activity android:name=".view.ui.CameraActivity"></activity>
         <activity android:name=".view.ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".view.ui.HomeActivity"
+            android:label="@string/title_activity_home"
+            android:theme="@style/Theme.LoyolaSocios.NoActionBar" />
         <activity android:name=".view.ui.ListUserActivity" />
     </application>
 

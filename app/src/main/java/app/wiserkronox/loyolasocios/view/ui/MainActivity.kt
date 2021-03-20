@@ -21,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,9 +29,15 @@ class MainActivity : AppCompatActivity() {
     lateinit var mGoogleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
 
+    companion object {
+        private const val TAG = "MainActivity"
+        private val REQUEST_FOR_PHOTO = 101
+    }
+
     private val userViewModel: UserViewModel by viewModels {
         UserViewModelFactory((application as LoyolaApplication).repository)
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +55,7 @@ class MainActivity : AppCompatActivity() {
 
         //Primero se verifica si no esta registrado con google
         getGoogleStatus()
+
     }
 
     /*************************************************************************************/
@@ -138,24 +146,25 @@ class MainActivity : AppCompatActivity() {
     /*************************************************************************************/
     //Funciones para el inicio de sesion manual
     /*************************************************************************************/
-    fun getUserByEmailPassword( email: String, password :String ){
+    fun getUserByEmailPassword(email: String, password: String){
         goLoader()
         userViewModel.getUserByEmail(email).observe(this){ user ->
             if( user == null ){
                 goWithoutSession();
                 Toast.makeText(this, "No se encontro el usuario", Toast.LENGTH_SHORT).show()
             } else {
-                defineDestination( user )
+                defineDestination(user)
             }
         }
     }
 
-    fun defineDestination( user: User){
+    fun defineDestination(user: User){
+        LoyolaApplication.getInstance()?.user = user
         when( user.state ){
-            User.REGISTER_LOGIN_STATE -> goRegisterData( user )
-            //User.REGISTER_DATA_STATE -> goRegisterData( user )
-            User.DATA_COMPLETE_STATE -> goHomeWithEmail( user.email )
-            else -> goRegisterData( user )
+            User.REGISTER_LOGIN_STATE -> goRegisterData(user)
+            User.REGISTER_DATA_STATE -> goRegisterPictures(user)
+            User.DATA_COMPLETE_STATE -> goHomeWithEmail(user.email)
+            else -> goRegisterData(user)
         }
     }
 
@@ -184,10 +193,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun goRegisterData( cUser: User){
+    fun goRegisterData(cUser: User){
         val fragment = MyDataFragment.newInstance(cUser)
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container_view,fragment)
+        transaction.replace(R.id.fragment_container_view, fragment)
         //transaction.addToBackStack(null)
         transaction.setReorderingAllowed(true)
         transaction.commit()
@@ -196,6 +205,14 @@ class MainActivity : AppCompatActivity() {
             setReorderingAllowed(true)
             replace<fragment>(R.id.fragment_container_view)
         }*/
+    }
+
+    fun goRegisterPictures(cUser: User){
+        val fragment = PicturesFragment.newInstance(cUser)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fragment_container_view, fragment)
+        transaction.setReorderingAllowed(true)
+        transaction.commit()
     }
 
     // Funcion temporal del demo
@@ -208,21 +225,29 @@ class MainActivity : AppCompatActivity() {
     // Funciones para el registro de usuarios
     /***************************************************************************************/
 
-    fun registerManualUser( user: User){
-        userViewModel.insert( user )
-        defineDestination( user )
+    fun registerManualUser(user: User){
+        userViewModel.insert(user)
+        defineDestination(user)
     }
 
-    fun updateUser( user: User){
-        userViewModel.update( user )
-        defineDestination( user )
+    fun updateUser(user: User){
+        userViewModel.update(user)
+        defineDestination(user)
     }
 
-    fun goHomeWithEmail( email: String ){
-        val intent = Intent(this@MainActivity,HomeActivity::class.java)
-        intent.putExtra("user_email",email)
+    fun goHomeWithEmail(email: String){
+        val intent = Intent(this@MainActivity, HomeActivity::class.java)
+        intent.putExtra("user_email", email)
         startActivity(intent)
         finish()
     }
+
+
+    fun takePicture( type: Int ){
+        val intent = Intent(this, CameraActivity::class.java)
+        intent.putExtra(CameraActivity.REQUEST_TYPE, type)
+        startActivityForResult(intent, REQUEST_FOR_PHOTO)
+    }
+
 
 }

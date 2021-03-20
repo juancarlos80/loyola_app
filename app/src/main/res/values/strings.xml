@@ -67,5 +67,17 @@
         <item>EXT</item>
     </string-array>
 
+    <!-- Textos para subir Fotos -->
+    <string name="subtitle_picture">Autentificación Socio</string>
+    <string name="hint_id_member">Número de Socio</string>
+    <string name="text_valid_id">Número de Socio VALIDO</string>
+    <string name="text_novalid_id">Número de Socio INVALIDO</string>
+    <string name="subtitle_pictures_id">Añada la foto de su carnet de identidad</string>
+    <string name="btn_upload_picture_1">Subir Anverso</string>
+    <string name="btn_upload_picture_2">Subir Reverso</string>
+    <string name="text_subtitle_selfie">Hagase una autofoto (Selfie)</string>
+    <string name="text_selfie_hint">Asegúrese que la iluminación y claridad de la foto sea lo mejor
+        posible. Caso contrario podría demorar su registro y activación.</string>
+    <string name="btn_upload_selfie">Subir mi Foto</string>
 
 </resources>
