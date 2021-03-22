@@ -10,11 +10,11 @@ class User () : Serializable {
     companion object {
         var REGISTER_LOGIN_STATE: String = "1"
         var REGISTER_DATA_STATE: String = "2"
-        var DATA_COMPLETE_STATE: String = "3"
+        var UNREVISED_STATE: String = "3"
     }
 
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+    var id: Long = 0
 
     //Primer metodo de autentificacion
     @ColumnInfo

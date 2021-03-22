@@ -13,6 +13,10 @@ class UserViewModel (private val repository: LoyolaRepository) : ViewModel() {
         repository.insert(user)
     }
 
+    /*fun insert2(user: User): LiveData<Long> {
+        return repository.insert2(user).asLiveData()
+    }*/
+
     fun deleteAll() = viewModelScope.launch {
         repository.deleteAll()
     }
@@ -21,13 +25,17 @@ class UserViewModel (private val repository: LoyolaRepository) : ViewModel() {
         repository.update(user)
     }
 
-    fun getUserByEmail( email: String ) : LiveData<User>{
-        return repository.getUserEmail(email).asLiveData()
-    }
-
-    /*fun getUserByEmail( email: String ) = viewModelScope.launch : LiveData<User> {
-        repository.getUserEmail(email).asLiveData()
+    /*fun getByOautdID(email: String): User {
+        return repository.getUserEmail(email)
     }*/
+
+    /*fun getUserByEmail2( email: String ) : Flow<User> {
+        return repository.getUserEmail2(email)
+    }*/
+
+    fun getUserByEmail2( email: String ) = viewModelScope.launch {
+        repository.getUserEmail2(email).asLiveData()
+    }
 
 }
 

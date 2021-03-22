@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import app.wiserkronox.loyolasocios.R
 import com.google.android.gms.common.SignInButton
+import com.google.android.material.snackbar.Snackbar
 
 class WithoutSessionFragment : Fragment() {
 
@@ -43,21 +43,27 @@ class WithoutSessionFragment : Fragment() {
 
         val btnLogin = root.findViewById<Button>(R.id.btn_login)
         btnLogin.setOnClickListener{
-            validarLogin()
+            validarLogin(it)
         }
+
+        root.findViewById<Button>(R.id.btn_lista).setOnClickListener{
+            (activity as MainActivity).goListUsers()
+        }
+
 
         return root
     }
 
-    fun validarLogin(){
+    fun validarLogin(view : View){
         if( TextUtils.isEmpty( email.text) ){
-            Toast.makeText( activity, "Debes ingresar tu correo para ingresar", Toast.LENGTH_SHORT).show()
+            Snackbar.make (view, "Debes ingresar tu direccion de correo para ingresar al sistema", Snackbar.LENGTH_LONG).show()
             return
         }
         if( TextUtils.isEmpty( password.text) ){
-            Toast.makeText( activity, "Debes ingresar tu clave para ingresar", Toast.LENGTH_SHORT).show()
+            Snackbar.make (view, "Debes ingresar la clave de tu para ingresar al sistema", Snackbar.LENGTH_LONG).show()
             return
         }
+
         ( activity as MainActivity).getUserByEmailPassword( email.text.toString(), password.text.toString() )
     }
 

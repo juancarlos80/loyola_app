@@ -10,7 +10,10 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import app.wiserkronox.loyolasocios.R
+import app.wiserkronox.loyolasocios.service.LoyolaApplication
 import app.wiserkronox.loyolasocios.service.model.User
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ManualRegisterFragment : Fragment() {
 
@@ -50,7 +53,12 @@ class ManualRegisterFragment : Fragment() {
 
     fun validateRegister(){
         if( TextUtils.isEmpty( email_1.text) ){
-            Toast.makeText( activity, "El email no puede estar vacio", Toast.LENGTH_SHORT).show()
+            Toast.makeText( activity, "El correo electronico no puede estar vacio", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if ( !android.util.Patterns.EMAIL_ADDRESS.matcher(email_1.text).matches() ){
+            Toast.makeText( activity, "El correo electrónico no es una direccion válida o contiene caracteres no permitidos", Toast.LENGTH_LONG).show()
             return
         }
 
@@ -59,16 +67,34 @@ class ManualRegisterFragment : Fragment() {
             return
         }
 
-        if( TextUtils.isEmpty( password_2.text) ){
-            Toast.makeText( activity, "La confirmacion del password no puede estar vacia", Toast.LENGTH_SHORT).show()
+        if( password_1.text.toString().length < 6 ){
+            Toast.makeText( activity, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val user = User()
-        user.email = email_1.text.toString()
-        user.password = password_1.text.toString()
-        user.state = User.REGISTER_LOGIN_STATE
-        (activity as MainActivity).registerManualUser( user )
+        if( TextUtils.isEmpty( password_2.text) ){
+            Toast.makeText( activity, "La confirmacion de la contraseña no puede estar vacia", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if( !password_1.text.toString().equals(  password_2.text.toString() ) ){
+            Toast.makeText( activity, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        GlobalScope.launch {
+            (activity as MainActivity).goLoader()
+            val user_reg = LoyolaApplication.getInstance()?.repository?.getUserEmail( email_1.text.toString() )
+            if( user_reg != null ){
+                (activity as MainActivity).goFailLogin("El correo electrónico que intenta registrar ya esta en uso")
+            } else {
+                val user = User()
+                user.email = email_1.text.toString()
+                user.password = password_1.text.toString()
+                user.state = User.REGISTER_LOGIN_STATE
+                (activity as MainActivity).registerManualUser( user )
+            }
+        }
     }
 
 }

@@ -67,6 +67,19 @@ class PicturesFragment : Fragment() {
             ( activity as MainActivity).takePicture(CameraActivity.REQUEST_SELFIE)
         }
 
+        val btnCancel = root.findViewById<Button>(R.id.btn_cancel_picture)
+        btnCancel.setOnClickListener{
+            ( activity as MainActivity).goWithoutSession()
+        }
+
+        val btnSave = root.findViewById<Button>(R.id.btn_save_picture)
+        btnSave.setOnClickListener {
+            cUser?.let{
+                it.state = User.UNREVISED_STATE
+                ( activity as MainActivity).updateUser(it)
+            }
+        }
+
         //Poblando el fragmento con la informacion del usuario
         cUser?.let {
 

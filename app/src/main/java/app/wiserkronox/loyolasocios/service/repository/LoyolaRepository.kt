@@ -11,9 +11,13 @@ class LoyolaRepository( private val userDao: UserDao ) {
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(user: User){
-        userDao.insert( user )
+    suspend fun insert(user: User): Long{
+        return userDao.insert( user )
     }
+
+    /*fun insert2(user: User): Flow<Long>{
+        return userDao.insert2( user )
+    }*/
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
@@ -21,8 +25,17 @@ class LoyolaRepository( private val userDao: UserDao ) {
         userDao.deleteAll()
     }
 
-    fun getUserEmail(email: String): Flow<User> {
+
+    fun getUserEmail(email: String): User {
         return userDao.getUserByEmail( email )
+    }
+
+    fun getUserEmail2(email: String): Flow<User> {
+        return userDao.getUserByEmail2( email )
+    }
+
+    fun getUserByOauthUid(oauthUid: String): User {
+        return userDao.getUserByOauth_uid( oauthUid)
     }
 
     @Suppress("RedundantSuspendModifier")

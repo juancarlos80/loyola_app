@@ -10,20 +10,26 @@ interface UserDao {
     fun getUsers(): Flow<List<User>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(user: User)
+    suspend fun insert(user: User): Long
+
+    /*@Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insert2(user: User): Flow<Long>*/
 
     @Update
     suspend fun update(user: User?)
 
 
     @Query("select * from user where email = :email")
-    fun getUserByEmail(email: String): Flow<User>
+    fun getUserByEmail(email: String): User
+
+    @Query("select * from user where email = :email")
+    fun getUserByEmail2(email: String): Flow<User>
 
     @Query("select * from user where email = :email and password = :password")
     fun getUserByEmailPassword(email: String, password: String): Flow<User>
 
     @Query("select * from user where oauth_uid = :oauth_uid")
-    fun getUserByOauth_uid(oauth_uid: String): Flow<User>
+    fun getUserByOauth_uid(oauth_uid: String): User
 
     @Query("delete from user")
     suspend fun deleteAll()
