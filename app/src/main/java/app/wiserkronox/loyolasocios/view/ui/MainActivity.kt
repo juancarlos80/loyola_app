@@ -97,6 +97,7 @@ class MainActivity : AppCompatActivity() {
     }*/
 
     fun signInGoogle(){
+        goLoader()
         val singInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(singInIntent, RC_SIGN_IN)
         //resultLauncher.launch( singInIntent )
@@ -117,10 +118,17 @@ class MainActivity : AppCompatActivity() {
                 ApiException::class.java
             )
 
-            val user = User()
+            if( account != null ){
+                verifyGoogleAccount( account )
+            } else {
+                goFailLogin("No se pudo conectar con la cuenta de Google")
+            }
+
+            /*val user = User()
             user.oauth_provider = "google"
             user.oauth_uid = account?.id ?:""
-            user.names = account?.givenName?:""+account?.familyName ?: ""
+            user.names = account?.givenName?:""
+            user.last_name_1 = account?.familyName ?: ""
             user.email = account?.email?:""
             user.picture = account?.photoUrl.toString()
 
@@ -143,12 +151,72 @@ class MainActivity : AppCompatActivity() {
             val googleIdToken = account?.idToken ?: ""
             Log.i("Google ID Token", googleIdToken)
 
-            //Enviar aqui a la actividad de registro
-            verifyGoogleUser( user )
+            Log.d("Goodle data", account.toString() )
+            //Enviar aqui a la actividad de registro*/
 
         } catch (e: ApiException) {
             Log.e("failed code=", e.statusCode.toString())
             goFailLogin("No se pudo vincular con la cuenta de google: "+e.statusCode.toString())
+        }
+    }
+
+    fun verifyGoogleAccount(account: GoogleSignInAccount){
+        GlobalScope.launch {
+            var user_local = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid( account?.id ?:"" )
+            if( user_local == null ){
+                val user = User()
+                user.oauth_provider = "google"
+                user.oauth_uid = account?.id ?:""
+                user.names = account?.givenName?:""
+                user.last_name_1 = account?.familyName ?: ""
+                user.email = account?.email?:""
+                user.picture = account?.photoUrl.toString()
+                registerGoogleUser( user )
+            } else {
+                //Actualizamos el usuario
+                user_local.names = account?.givenName?:""
+                user_local.last_name_1 = account?.familyName ?: ""
+                user_local.email = account?.email?:""
+                user_local.picture = account?.photoUrl.toString()
+
+                if( user_local.state == "")
+                    user_local.state = User.REGISTER_LOGIN_STATE
+
+                updateUser( user_local )
+            }
+        }
+    }
+
+    /*fun verifyGoogleUser(user: User){
+        //Preguntamos si el usuario no esta ya registrado
+        GlobalScope.launch {
+            var user_local = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid( user.oauth_uid )
+            if( user_local == null ){
+                user.state = User.REGISTER_LOGIN_STATE
+                registerGoogleUser( user )
+            } else {
+                //account?.familyName ?: ""
+                if( user_local.state == "")
+                    user.state = User.REGISTER_LOGIN_STATE
+                defineDestination( user )
+            }
+        }
+    }*/
+
+    fun registerGoogleUser(user: User){
+        GlobalScope.launch {
+            val id = LoyolaApplication.getInstance()?.repository?.insert(user)
+            if (id != null) {
+                if( id > 0 ) {
+                    Log.d(TAG, "Id usuario nuevo "+ id )
+                    var user = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid(user.oauth_uid)
+                    user?.let{
+                        defineDestination( user )
+                    }
+                } else {
+                    goFailLogin("NO se pudo insertar el usuario ")
+                }
+            }
         }
     }
 
@@ -228,7 +296,7 @@ class MainActivity : AppCompatActivity() {
         }*/
     }
 
-    fun getUserByOauthUid(oauthId: String) {
+    /*fun getUserByOauthUid(oauthId: String) {
         goLoader()
         GlobalScope.launch {
             val user = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid(oauthId)
@@ -240,7 +308,7 @@ class MainActivity : AppCompatActivity() {
                 goFailLogin("No se encontro el usuario")
             }
         }
-    }
+    }*/
 
     fun defineDestination(user: User){
         LoyolaApplication.getInstance()?.user = user
@@ -312,11 +380,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun goHomeWithEmail(email: String){
+        val intent = Intent(this@MainActivity, HomeActivity::class.java)
+        intent.putExtra("user_email", email)
+        startActivity(intent)
+        finish()
+    }
+
+    fun takePicture( type: Int ){
+        val intent = Intent(this, CameraActivity::class.java)
+        intent.putExtra(CameraActivity.REQUEST_TYPE, type)
+        startActivityForResult(intent, REQUEST_FOR_PHOTO)
+    }
+
     /***************************************************************************************/
     // Funciones para el registro de usuarios
     /***************************************************************************************/
 
-    fun verifyGoogleUser(user: User){
+    /*fun verifyGoogleUser(user: User){
         //Preguntamos si el usuario no esta ya registrado
         GlobalScope.launch {
             var user_local = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid( user.oauth_uid )
@@ -330,26 +411,8 @@ class MainActivity : AppCompatActivity() {
                 defineDestination( user )
             }
         }
-    }
+    }*/
 
-    fun registerGoogleUser(user: User){
-        GlobalScope.launch {
-            val id = LoyolaApplication.getInstance()?.repository?.insert(user)
-            if (id != null) {
-                if( id > 0 ) {
-                    Log.d(TAG, "Id usuario nuevo "+ id )
-                    var user = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid(user.oauth_uid)
-                    user?.let{
-                        defineDestination( user )
-                    }
-                } else {
-                    goFailLogin("NO se pudo insertar el usuario ")
-                }
-            }
-        }
-    }
-
-    ///*userViewModel.getUserByEmail(email).observe(this){ user ->
     fun registerManualUser(user: User){
 
         /*userViewModel.insert2(user).observe(this){
@@ -382,20 +445,5 @@ class MainActivity : AppCompatActivity() {
         userViewModel.update(user)
         defineDestination(user)
     }
-
-    fun goHomeWithEmail(email: String){
-        val intent = Intent(this@MainActivity, HomeActivity::class.java)
-        intent.putExtra("user_email", email)
-        startActivity(intent)
-        finish()
-    }
-
-
-    fun takePicture( type: Int ){
-        val intent = Intent(this, CameraActivity::class.java)
-        intent.putExtra(CameraActivity.REQUEST_TYPE, type)
-        startActivityForResult(intent, REQUEST_FOR_PHOTO)
-    }
-
 
 }

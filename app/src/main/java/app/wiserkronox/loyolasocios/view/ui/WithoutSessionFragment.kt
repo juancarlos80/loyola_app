@@ -50,7 +50,6 @@ class WithoutSessionFragment : Fragment() {
             (activity as MainActivity).goListUsers()
         }
 
-
         return root
     }
 
