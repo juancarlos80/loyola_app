@@ -11,8 +11,14 @@ class LoyolaRepository( private val userDao: UserDao ) {
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(user: User): Long{
+    suspend fun insert(user: User): Long {
         return userDao.insert( user )
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun update2(user: User): Int {
+        return userDao.update2( user )
     }
 
     /*fun insert2(user: User): Flow<Long>{

@@ -393,6 +393,12 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_FOR_PHOTO)
     }
 
+    fun showMessage(message: String){
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     /***************************************************************************************/
     // Funciones para el registro de usuarios
     /***************************************************************************************/
@@ -442,8 +448,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun updateUser(user: User){
-        userViewModel.update(user)
-        defineDestination(user)
+        goLoader()
+        GlobalScope.launch {
+            val id = LoyolaApplication.getInstance()?.repository?.update2(user)?:0
+            if (id > 0) {
+                defineDestination(user)
+            } else {
+                showMessage("No se pudo actualizar la informacion del usuario")
+            }
+        }
     }
 
 }

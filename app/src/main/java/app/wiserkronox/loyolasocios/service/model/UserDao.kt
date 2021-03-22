@@ -12,8 +12,8 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(user: User): Long
 
-    /*@Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert2(user: User): Flow<Long>*/
+    @Update(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun update2(user: User): Int
 
     @Update
     suspend fun update(user: User?)

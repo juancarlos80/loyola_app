@@ -11,8 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="16dp"
         android:text="@string/subtitle_my_data"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -73,13 +72,14 @@
         app:layout_constraintStart_toEndOf="@+id/edit_id_number"
         app:layout_constraintTop_toTopOf="@+id/edit_id_number" />
 
-    <EditText
+    <DatePicker
         android:id="@+id/edit_birthday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="48dp"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner"
         android:ems="10"
-        android:inputType="date"
         android:hint="@string/hint_birthday"
         app:layout_constraintStart_toStartOf="@+id/edit_id_number"
         app:layout_constraintTop_toBottomOf="@+id/edit_id_number" />
@@ -115,5 +115,14 @@
         android:text="@string/btn_cancel"
         app:layout_constraintBottom_toBottomOf="@+id/btn_save"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hint_birthday"
+        app:layout_constraintBottom_toTopOf="@+id/edit_birthday"
+        app:layout_constraintStart_toStartOf="@+id/edit_id_number"
+        app:layout_constraintTop_toBottomOf="@+id/edit_id_number" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
