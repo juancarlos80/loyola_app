@@ -2,15 +2,19 @@ package app.wiserkronox.loyolasocios.view.ui
 
 import android.net.Uri
 import android.os.Bundle
+import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import app.wiserkronox.loyolasocios.R
 import app.wiserkronox.loyolasocios.service.model.User
+
 
 
 class PicturesFragment : Fragment() {
@@ -47,6 +51,7 @@ class PicturesFragment : Fragment() {
         // Inflate the layout for this fragment
         val root: View = inflater.inflate(R.layout.fragment_pictures, container, false)
 
+
         id_member = root.findViewById(R.id.edit_id_member)
         picture_1 = root.findViewById(R.id.img_picture_1)
         picture_2 = root.findViewById(R.id.img_picture_2)
@@ -54,6 +59,7 @@ class PicturesFragment : Fragment() {
 
         val btnTakePicture1 = root.findViewById<Button>(R.id.btn_upload_picture_1)
         btnTakePicture1.setOnClickListener {
+            saveidMember()
             ( activity as MainActivity).takePicture(CameraActivity.REQUEST_PICTURE_1)
         }
 
@@ -74,10 +80,7 @@ class PicturesFragment : Fragment() {
 
         val btnSave = root.findViewById<Button>(R.id.btn_save_picture)
         btnSave.setOnClickListener {
-            cUser?.let{
-                it.state = User.UNREVISED_STATE
-                ( activity as MainActivity).updateUser(it)
-            }
+            validateRegister()
         }
 
         //Poblando el fragmento con la informacion del usuario
@@ -86,6 +89,7 @@ class PicturesFragment : Fragment() {
             id_member.setText( it.id_member )
 
             if( it.picture_1 != ""){
+                Log.d("TAG", "pic1: "+it.picture_1)
                 Uri.parse( it.picture_1)?.let {
                      picture_1.setImageURI( it )
                 }
@@ -103,6 +107,40 @@ class PicturesFragment : Fragment() {
 
         }
         return root
+    }
+
+    fun saveidMember(){
+        if( !TextUtils.isEmpty(id_member.text) ){
+            cUser?.let {
+                it.id_member = id_member.text.toString()
+                (activity as MainActivity).backUpdate(it)
+            }
+        }
+    }
+
+    fun validateRegister(){
+        if( TextUtils.isEmpty(id_member.text) ){
+            Toast.makeText(activity, "Debes ingresar tu código de socio", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if( TextUtils.isEmpty(cUser?.picture_1) ){
+            Toast.makeText(activity, "Debes subir la foto del anverso de tu ci", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if( TextUtils.isEmpty(cUser?.picture_2) ){
+            Toast.makeText(activity, "Debes subir la foto del reverso de tu ci", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if( TextUtils.isEmpty(cUser?.picture_1) ){
+            Toast.makeText(activity, "Debes subir tu una autofoto personal (selfie)", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        cUser?.let{
+            it.state = User.UNREVISED_STATE
+            ( activity as MainActivity).updateUser(it)
+        }
     }
 
 }

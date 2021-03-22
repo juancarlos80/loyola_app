@@ -146,9 +146,24 @@ class CameraActivity : AppCompatActivity() {
                     //Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     //Log.d(CameraActivity.TAG, msg)
                     when ( current_request ) {
-                        REQUEST_PICTURE_1 -> user.picture_1 = savedUri.toString()
-                        REQUEST_PICTURE_2 -> user.picture_2 = savedUri.toString()
-                        REQUEST_SELFIE -> user.selfie = savedUri.toString()
+                        REQUEST_PICTURE_1 -> {
+                            if( !user.picture_1.equals("") ){
+                                deleteIfExists( user.picture_1 )
+                            }
+                            user.picture_1 = savedUri.toString()
+                        }
+                        REQUEST_PICTURE_2 -> {
+                            if( !user.picture_2.equals("") ){
+                                deleteIfExists( user.picture_2 )
+                            }
+                            user.picture_2 = savedUri.toString()
+                        }
+                        REQUEST_SELFIE -> {
+                            if( !user.selfie.equals("") ){
+                                deleteIfExists( user.selfie )
+                            }
+                            user.selfie = savedUri.toString()
+                        }
                     }
                     userViewModel.update(user)
                     finish()
@@ -221,6 +236,7 @@ class CameraActivity : AppCompatActivity() {
         requestCode: Int, permissions: Array<String>, grantResults:
         IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 startCamera()
@@ -233,5 +249,10 @@ class CameraActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    fun deleteIfExists(uriFile: String){
+        val image = File( Uri.parse(uriFile)?.path )
+        if( image.exists() ) image.delete()
     }
 }

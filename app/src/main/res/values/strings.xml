@@ -36,7 +36,7 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
 
-    <string name="action_settings">Ajustes</string>
+    <string name="action_logout">Cerrar Sesión</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Mis Datos</string>

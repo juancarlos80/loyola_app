@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, "onResume")
         //Verificamos que no tenga informacion guardada para el inicio de sesion
-        val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+        val sharedPref = getSharedPreferences(getString(R.string.app_name),Context.MODE_PRIVATE) ?: return
         val email = sharedPref.getString("email", "")?:""
         val password = sharedPref.getString("password", "")?:""
 
@@ -351,8 +351,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun backUpdate( user: User){
+        GlobalScope.launch {
+            LoyolaApplication.getInstance()?.repository?.update2(user)
+        }
+    }
+
     fun saveManualUserLogin(email: String, password: String){
-        val sharedPreferences = getPreferences(Context.MODE_PRIVATE)?: return
+        val sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)?: return
         with( sharedPreferences.edit() ){
             putString("email", email)
             putString("password", password)
@@ -363,11 +369,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun saveOauthlUserLogin(oauth_uid: String){
-        val sharedPreferences = getPreferences(Context.MODE_PRIVATE)?: return
+        val sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)?: return
         with( sharedPreferences.edit() ){
             putString("oauth_uid", oauth_uid)
 
-            remove("username")
+            remove("email")
             remove("password")
             commit()
         }
@@ -379,10 +385,10 @@ class MainActivity : AppCompatActivity() {
             signOutGoogle()
         }
 
-        val sharedPreferences = getPreferences(Context.MODE_PRIVATE)?: return
+        val sharedPreferences = getSharedPreferences(getString(R.string.app_name),Context.MODE_PRIVATE)?: return
         with( sharedPreferences.edit() ){
             remove("oauth_uid")
-            remove("username")
+            remove("email")
             remove("password")
             commit()
         }

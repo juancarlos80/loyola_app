@@ -1,8 +1,11 @@
 package app.wiserkronox.loyolasocios.view.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -38,6 +41,16 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.action_logout -> {
+                closeSession()
+                true
+            } else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.home, menu)
@@ -47,5 +60,20 @@ class HomeActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    fun closeSession(){
+        val sharedPreferences = getSharedPreferences(getString(R.string.app_name),Context.MODE_PRIVATE)?: return
+        with( sharedPreferences.edit() ){
+            remove("oauth_uid")
+            remove("email")
+            remove("password")
+            commit()
+
+            val intent = Intent(this@HomeActivity, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
     }
 }
