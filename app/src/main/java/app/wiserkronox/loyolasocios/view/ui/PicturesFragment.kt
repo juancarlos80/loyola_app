@@ -138,7 +138,7 @@ class PicturesFragment : Fragment() {
         }
 
         cUser?.let{
-            it.state = User.UNREVISED_STATE
+            it.state = User.REGISTER_PICTURE_STATE
             ( activity as MainActivity).updateUser(it)
         }
     }

@@ -2,6 +2,8 @@ package app.wiserkronox.loyolasocios.view.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -13,11 +15,18 @@ import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import app.wiserkronox.loyolasocios.R
+import app.wiserkronox.loyolasocios.TermsFragment
 import app.wiserkronox.loyolasocios.lifecycle.MainObserver
 import app.wiserkronox.loyolasocios.service.LoyolaApplication
 import app.wiserkronox.loyolasocios.service.model.User
+import app.wiserkronox.loyolasocios.service.repository.LoyolaService
 import app.wiserkronox.loyolasocios.viewmodel.UserViewModel
 import app.wiserkronox.loyolasocios.viewmodel.UserViewModelFactory
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -26,6 +35,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.json.JSONException
+import org.json.JSONObject
 import java.util.*
 
 
@@ -60,6 +71,7 @@ class MainActivity : AppCompatActivity() {
 
         //Primero se verifica si no esta registrado con google
         //getGoogleStatus()
+        getUserFromServerByEmailPassord2("hola", "dos");
 
     }
 
@@ -68,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, "onResume")
         //Verificamos que no tenga informacion guardada para el inicio de sesion
-        val sharedPref = getSharedPreferences(getString(R.string.app_name),Context.MODE_PRIVATE) ?: return
+        val sharedPref = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE) ?: return
         val email = sharedPref.getString("email", "")?:""
         val password = sharedPref.getString("password", "")?:""
 
@@ -103,7 +115,7 @@ class MainActivity : AppCompatActivity() {
         if( account == null ) {
             goWithoutSession()
         } else {
-            verifyGoogleAccount( account )
+            verifyGoogleAccount(account)
         }
     }
 
@@ -135,25 +147,26 @@ class MainActivity : AppCompatActivity() {
     private fun handleSingInResult(completedTask: Task<GoogleSignInAccount>){
         try {
             val account = completedTask.getResult(
-                ApiException::class.java
+                    ApiException::class.java
             )
 
             if( account != null ){
-                verifyGoogleAccount( account )
+                verifyGoogleAccount(account)
             } else {
                 goFailLogin("No se pudo conectar con la cuenta de Google")
             }
 
         } catch (e: ApiException) {
             Log.e("failed code=", e.statusCode.toString())
-            goFailLogin("No se pudo vincular con la cuenta de google: "+e.statusCode.toString())
+            goFailLogin("No se pudo vincular con la cuenta de google: " + e.statusCode.toString())
         }
     }
 
     fun verifyGoogleAccount(account: GoogleSignInAccount){
-        saveOauthlUserLogin( account?.id?:"" )
+        saveOauthlUserLogin(account?.id ?: "")
         GlobalScope.launch {
-            var user_local = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid( account?.id ?:"" )
+            var user_local = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid(account?.id
+                    ?: "")
             if( user_local == null ){
                 val user = User()
                 user.oauth_provider = "google"
@@ -162,7 +175,7 @@ class MainActivity : AppCompatActivity() {
                 user.last_name_1 = account?.familyName ?: ""
                 user.email = account?.email?:""
                 user.picture = account?.photoUrl.toString()
-                registerGoogleUser( user )
+                registerGoogleUser(user)
             } else {
                 //Actualizamos el usuario
                 user_local.names = account?.givenName?:""
@@ -173,7 +186,7 @@ class MainActivity : AppCompatActivity() {
                 if( user_local.state == "")
                     user_local.state = User.REGISTER_LOGIN_STATE
 
-                updateUser( user_local )
+                updateUser(user_local)
             }
         }
     }
@@ -183,10 +196,10 @@ class MainActivity : AppCompatActivity() {
             val id = LoyolaApplication.getInstance()?.repository?.insert(user)
             if (id != null) {
                 if( id > 0 ) {
-                    Log.d(TAG, "Id usuario nuevo "+ id )
+                    Log.d(TAG, "Id usuario nuevo " + id)
                     var user = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid(user.oauth_uid)
                     user?.let{
-                        defineDestination( user )
+                        defineDestination(user)
                     }
                 } else {
                     goFailLogin("NO se pudo insertar el usuario ")
@@ -217,9 +230,9 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch {
             val user = LoyolaApplication.getInstance()?.repository?.getUserEmail(email)
             if( user != null ) {
-                Log.d(MainActivity.TAG, "user"+user.password)
-                saveManualUserLogin( user.email, user.password )
-                defineDestination( user )
+                Log.d(MainActivity.TAG, "user" + user.password)
+                saveManualUserLogin(user.email, user.password)
+                defineDestination(user)
             } else {
                 Log.d(MainActivity.TAG, "no hay usuario")
                 goFailLogin("No se encontro el usuario")
@@ -236,6 +249,7 @@ class MainActivity : AppCompatActivity() {
         when( user.state ){
             User.REGISTER_LOGIN_STATE -> goRegisterData(user)
             User.REGISTER_DATA_STATE -> goRegisterPictures(user)
+            User.REGISTER_PICTURE_STATE -> goTerms(user)
             User.UNREVISED_STATE -> goHomeWithEmail(user.email)
             else -> goWithoutSession()
         }
@@ -287,6 +301,14 @@ class MainActivity : AppCompatActivity() {
         transaction.commit()
     }
 
+    fun goTerms(cUser: User){
+        val fragment = TermsFragment.newInstance(cUser)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fragment_container_view, fragment)
+        transaction.setReorderingAllowed(true)
+        transaction.commit()
+    }
+
     // Funcion temporal del demo
     fun  goListUsers(){
         val intent = Intent(this@MainActivity, ListUserActivity::class.java)
@@ -308,7 +330,7 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    fun takePicture( type: Int ){
+    fun takePicture(type: Int){
         val intent = Intent(this, CameraActivity::class.java)
         intent.putExtra(CameraActivity.REQUEST_TYPE, type)
         startActivityForResult(intent, REQUEST_FOR_PHOTO)
@@ -330,7 +352,7 @@ class MainActivity : AppCompatActivity() {
             val id = LoyolaApplication.getInstance()?.repository?.insert(user)
             if (id != null) {
                 if( id > 0 ) {
-                    Log.d(TAG, "Id usuario nuevo "+ id )
+                    Log.d(TAG, "Id usuario nuevo " + id)
                     getUserByEmailPassword(user.email, user.password)
                 } else {
                     goFailLogin("NO se pudo insertar el usuario ")
@@ -351,7 +373,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun backUpdate( user: User){
+    fun backUpdate(user: User){
         GlobalScope.launch {
             LoyolaApplication.getInstance()?.repository?.update2(user)
         }
@@ -359,7 +381,7 @@ class MainActivity : AppCompatActivity() {
 
     fun saveManualUserLogin(email: String, password: String){
         val sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)?: return
-        with( sharedPreferences.edit() ){
+        with(sharedPreferences.edit()){
             putString("email", email)
             putString("password", password)
 
@@ -370,7 +392,7 @@ class MainActivity : AppCompatActivity() {
 
     fun saveOauthlUserLogin(oauth_uid: String){
         val sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)?: return
-        with( sharedPreferences.edit() ){
+        with(sharedPreferences.edit()){
             putString("oauth_uid", oauth_uid)
 
             remove("email")
@@ -385,13 +407,74 @@ class MainActivity : AppCompatActivity() {
             signOutGoogle()
         }
 
-        val sharedPreferences = getSharedPreferences(getString(R.string.app_name),Context.MODE_PRIVATE)?: return
-        with( sharedPreferences.edit() ){
+        val sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)?: return
+        with(sharedPreferences.edit()){
             remove("oauth_uid")
             remove("email")
             remove("password")
             commit()
         }
+    }
+
+
+
+
+    /**********************************************************************************************/
+    //Operaciones de Red
+    /**********************************************************************************************/
+    fun isOnline(): Boolean {
+        val connMgr = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo: NetworkInfo? = connMgr.activeNetworkInfo
+        return networkInfo?.isConnected == true
+    }
+
+    fun getUserFromServerByEmailPassord(email: String, password: String){
+        // Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(this)
+        val url = "http://www.google.com"
+
+        // Request a string response from the provided URL.
+        val stringRequest = StringRequest(Request.Method.GET, url,
+                Response.Listener<String> { response ->
+                    // Display the first 500 characters of the response string.
+                    Log.d(TAG, "Response is: ${response.substring(0, 500)}")
+                },
+                Response.ErrorListener {
+                    Log.d(TAG, "That didn't work!")
+                })
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest)
+
+    }
+
+    fun getUserFromServerByEmailPassord2(email: String, password: String){
+        // Instantiate the RequestQueue.
+        val url = getString(R.string.host_service)+getString(R.string.home_service)+"set_user_data.php"
+
+        val jsonBody = JSONObject()
+        try {
+            jsonBody.put("email", email)
+            jsonBody.put("password", password)
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+
+        val jsonObjectRequest = JsonObjectRequest(Request.Method.POST, url, jsonBody,
+                Response.Listener { response ->
+                    Log.d(TAG, "Response is: ${response.toString()}")
+                },
+                Response.ErrorListener { error ->
+                    // TODO: Handle error
+                    Log.e(TAG, error.toString())
+                    Log.d(TAG, "That didn't work!")
+                    error.printStackTrace()
+                }
+        )
+
+        // Add the request to the RequestQueue.
+        LoyolaService.getInstance(this).addToRequestQueue(jsonObjectRequest)
+
     }
 
 }

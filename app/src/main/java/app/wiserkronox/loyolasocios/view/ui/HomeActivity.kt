@@ -32,8 +32,11 @@ class HomeActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow), drawerLayout)
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
+            ), drawerLayout
+        )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -63,8 +66,11 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun closeSession(){
-        val sharedPreferences = getSharedPreferences(getString(R.string.app_name),Context.MODE_PRIVATE)?: return
-        with( sharedPreferences.edit() ){
+        val sharedPreferences = getSharedPreferences(
+            getString(R.string.app_name),
+            Context.MODE_PRIVATE
+        )?: return
+        with(sharedPreferences.edit()){
             remove("oauth_uid")
             remove("email")
             remove("password")

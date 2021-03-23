@@ -80,4 +80,14 @@
         posible. Caso contrario podría demorar su registro y activación.</string>
     <string name="btn_upload_selfie">Subir mi Foto</string>
 
+    <!-- Textos para los terminos de la aplicacion -->
+    <string name="terms_title">TÉRMINOS Y CONDICIONES DE USO</string>
+    <string name="terms_body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dapibus euismod orci, eu tincidunt ante lobortis mollis. Cras quis lacinia augue. Quisque pretium sapien mi, a mollis dolor ornare sit amet. Donec quam tellus, tincidunt sit amet sapien vel, auctor consectetur ipsum. Pellentesque vel tellus gravida, tempus quam non, molestie turpis. Phasellus sed rhoncus magna. Fusce ac tortor molestie metus sodales convallis. Integer suscipit dui ac accumsan egestas. Aenean tristique rutrum ante. Etiam egestas, sapien nec rhoncus consequat, mi quam euismod lorem, at pretium sem dolor vitae sem.\n\n
+            Nullam facilisis nibh at eros malesuada, quis accumsan nisi eleifend. Donec vel ante nec velit luctus semper. In laoreet lacinia venenatis. Aliquam vitae convallis magna. Vestibulum vel pellentesque nunc. Suspendisse viverra mauris a diam convallis, a sagittis elit accumsan. Nunc sagittis ullamcorper placerat. Donec magna dui, pulvinar at rutrum a, pulvinar nec metus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n\n
+            Donec nec massa a orci eleifend sodales. Proin semper nunc metus, quis porttitor enim lacinia vitae. Donec eu mollis metus. Curabitur vel gravida purus. In id lectus eu eros tempus blandit quis ac justo. Nulla faucibus volutpat quam. Fusce consectetur et augue quis varius. Pellentesque neque purus, elementum in rutrum eget, feugiat eu erat. Proin lorem mi, ornare vel fringilla non, pulvinar at tellus. Mauris quis quam metus. Pellentesque vehicula sit amet enim vel rhoncus.\n
+    </string>
+    <string name="text_swicth">Acepto</string>
+    <string name="text_swicth_extend">Aceptas haber leido los TERMINOS Y CONDICIONES DE USO de la aplicación y estoy plenamente deacuerdo con ellos</string>
+    <string name="btn_send">Enviar</string>
+
 </resources>

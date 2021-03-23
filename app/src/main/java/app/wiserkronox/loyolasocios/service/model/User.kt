@@ -10,7 +10,9 @@ class User () : Serializable {
     companion object {
         var REGISTER_LOGIN_STATE: String = "1"
         var REGISTER_DATA_STATE: String = "2"
-        var UNREVISED_STATE: String = "3"
+        var REGISTER_PICTURE_STATE: String = "3"
+        var UPLOAD_DATA_SERVER: String = "4"
+        var UNREVISED_STATE: String = "5"
     }
 
     @PrimaryKey(autoGenerate = true)
