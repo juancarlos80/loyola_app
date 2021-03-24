@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,11 +16,13 @@ import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import app.wiserkronox.loyolasocios.R
-import app.wiserkronox.loyolasocios.TermsFragment
 import app.wiserkronox.loyolasocios.lifecycle.MainObserver
 import app.wiserkronox.loyolasocios.service.LoyolaApplication
 import app.wiserkronox.loyolasocios.service.model.User
+import app.wiserkronox.loyolasocios.service.repository.FileDataPart
 import app.wiserkronox.loyolasocios.service.repository.LoyolaService
+import app.wiserkronox.loyolasocios.service.repository.UserRest
+import app.wiserkronox.loyolasocios.service.repository.VolleyMultipartRequest
 import app.wiserkronox.loyolasocios.viewmodel.UserViewModel
 import app.wiserkronox.loyolasocios.viewmodel.UserViewModelFactory
 import com.android.volley.Request
@@ -35,8 +38,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.json.JSONException
-import org.json.JSONObject
+import java.io.File
 import java.util.*
 
 
@@ -71,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 
         //Primero se verifica si no esta registrado con google
         //getGoogleStatus()
-        getUserFromServerByEmailPassord2("hola", "dos");
+        //getUserFromServerByEmailPassord2("hola", "dos");
 
     }
 
@@ -338,7 +340,7 @@ class MainActivity : AppCompatActivity() {
 
     fun showMessage(message: String){
         Handler(Looper.getMainLooper()).post {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
         }
     }
 
@@ -448,33 +450,78 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun getUserFromServerByEmailPassord2(email: String, password: String){
+    fun setUserServer(user: User){
         // Instantiate the RequestQueue.
-        val url = getString(R.string.host_service)+getString(R.string.home_service)+"set_user_data.php"
+        goLoader()
+        val userRest = UserRest(this)
 
-        val jsonBody = JSONObject()
-        try {
-            jsonBody.put("email", email)
-            jsonBody.put("password", password)
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-
-        val jsonObjectRequest = JsonObjectRequest(Request.Method.POST, url, jsonBody,
+        val jsonObjectRequest = JsonObjectRequest(Request.Method.POST, userRest.getUserDataURL(), userRest.getUserDataJson(user),
                 Response.Listener { response ->
                     Log.d(TAG, "Response is: ${response.toString()}")
+                    if (response.getBoolean("success")) {
+                        Log.d(TAG, "Exito")
+                        showMessage("Primer paso guardado")
+                    } else {
+                        showMessage(response.getString("reason"))
+                        goTerms(user)
+                    }
                 },
                 Response.ErrorListener { error ->
                     // TODO: Handle error
                     Log.e(TAG, error.toString())
-                    Log.d(TAG, "That didn't work!")
                     error.printStackTrace()
+                    showMessage("Error de conexión con el servidor")
+                    goTerms(user)
                 }
         )
 
         // Add the request to the RequestQueue.
         LoyolaService.getInstance(this).addToRequestQueue(jsonObjectRequest)
 
+    }
+    //private var imageData: ByteArray? = null
+
+    private fun uploadImageServer(type_photo: String, imageName:String, imageData: ByteArray,
+                                  type_auth: String, value_auth: String) {
+        val postURL =  UserRest(this).getUserPictureURL()
+        //imageData?: return
+        val request = object : VolleyMultipartRequest(
+                Request.Method.POST,
+                postURL,
+                Response.Listener {
+                    var resp = String(it.data)
+                    Log.d("Upload", "response is: $resp")
+                },
+                Response.ErrorListener {
+                    Log.d("Upload", "error is: $it")
+                }
+        ) {
+            override fun getByteData(): MutableMap<String, FileDataPart> {
+                var params = HashMap<String, FileDataPart>()
+                params["imageFile"] = FileDataPart(imageName, imageData!!, "jpeg")
+                return params
+            }
+
+            //@Throws(AuthFailureError::class)
+            override fun getParams(): Map<String, String>? {
+                val params: MutableMap<String, String> = HashMap()
+                params[type_auth] = value_auth
+                params["type_photo"] = type_photo
+                return params
+            }
+        }
+        Volley.newRequestQueue(this).add(request)
+    }
+
+    //@Throws(IOException::class)
+    fun uploadImageUriEmail(type_photo: String, uri: String,
+                            type_auth: String, value_auth: String) {
+        Log.d("Upload", uri)
+        val photo = File( Uri.parse(uri).path )
+        val inputStream = contentResolver.openInputStream(Uri.parse(uri))
+        inputStream?.buffered()?.use {
+            uploadImageServer(type_photo, photo.name, it.readBytes(), type_auth, value_auth)
+        }
     }
 
 }

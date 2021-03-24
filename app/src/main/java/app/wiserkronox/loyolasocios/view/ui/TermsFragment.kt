@@ -1,4 +1,4 @@
-package app.wiserkronox.loyolasocios
+package app.wiserkronox.loyolasocios.view.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import app.wiserkronox.loyolasocios.R
 import app.wiserkronox.loyolasocios.service.model.User
 import com.google.android.material.switchmaterial.SwitchMaterial
 
@@ -56,6 +57,12 @@ class TermsFragment : Fragment() {
                 btnCancel.visibility = Button.VISIBLE
             }
         }
+        cUser?.let { user ->
+            btnAcept.setOnClickListener {
+                (activity as MainActivity).uploadImageUriEmail( "picture_1", user.picture_2, "email", user.email )
+            }
+        }
+
 
         return root
     }
