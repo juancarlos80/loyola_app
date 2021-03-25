@@ -59,10 +59,10 @@ class TermsFragment : Fragment() {
         }
         cUser?.let { user ->
             btnAcept.setOnClickListener {
-                (activity as MainActivity).uploadImageUriEmail( "picture_1", user.picture_2, "email", user.email )
+                user.state = User.UPLOAD_DATA_SERVER
+                (activity as MainActivity).updateUser( user )
             }
         }
-
 
         return root
     }

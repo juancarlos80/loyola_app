@@ -38,6 +38,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.File
 import java.util.*
 
@@ -46,11 +48,14 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var mGoogleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
+    private var google_request = false
 
     companion object {
         private const val TAG = "MainActivity"
         private val REQUEST_FOR_PHOTO = 101
     }
+
+    lateinit var uploadDataFragment: UploadDataFragment
 
     private val userViewModel: UserViewModel by viewModels {
         UserViewModelFactory((application as LoyolaApplication).repository)
@@ -96,7 +101,10 @@ class MainActivity : AppCompatActivity() {
             getGoogleStatus()
             return
         }
-        goWithoutSession()
+
+        if( !google_request ) {
+            goWithoutSession()
+        }
     }
 
     /*************************************************************************************/
@@ -139,8 +147,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if( requestCode == RC_SIGN_IN ){
+            google_request = true
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSingInResult(task)
         }
@@ -252,6 +260,7 @@ class MainActivity : AppCompatActivity() {
             User.REGISTER_LOGIN_STATE -> goRegisterData(user)
             User.REGISTER_DATA_STATE -> goRegisterPictures(user)
             User.REGISTER_PICTURE_STATE -> goTerms(user)
+            User.UPLOAD_DATA_SERVER -> goUploadData(user)
             User.UNREVISED_STATE -> goHomeWithEmail(user.email)
             else -> goWithoutSession()
         }
@@ -307,6 +316,14 @@ class MainActivity : AppCompatActivity() {
         val fragment = TermsFragment.newInstance(cUser)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragment_container_view, fragment)
+        transaction.setReorderingAllowed(true)
+        transaction.commit()
+    }
+
+    fun goUploadData(cUser: User){
+        uploadDataFragment = UploadDataFragment.newInstance(cUser)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fragment_container_view, uploadDataFragment)
         transaction.setReorderingAllowed(true)
         transaction.commit()
     }
@@ -450,21 +467,25 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun setUserServer(user: User){
-        // Instantiate the RequestQueue.
-        goLoader()
+    fun uploadUserDataServer(user: User){
         val userRest = UserRest(this)
-
-        val jsonObjectRequest = JsonObjectRequest(Request.Method.POST, userRest.getUserDataURL(), userRest.getUserDataJson(user),
+        val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.POST, userRest.getUserDataURL(),
+                userRest.getUserDataJson(user),
                 Response.Listener { response ->
+
                     Log.d(TAG, "Response is: ${response.toString()}")
                     if (response.getBoolean("success")) {
                         Log.d(TAG, "Exito")
-                        showMessage("Primer paso guardado")
+
+                        user.data_online = true;
+                        backUpdate( user )
+                        uploadDataFragment.sendUserImages( user )
                     } else {
                         showMessage(response.getString("reason"))
-                        goTerms(user)
                     }
+                    uploadDataFragment.terminateProgress("data", response.getBoolean("success"))
+
                 },
                 Response.ErrorListener { error ->
                     // TODO: Handle error
@@ -482,18 +503,49 @@ class MainActivity : AppCompatActivity() {
     //private var imageData: ByteArray? = null
 
     private fun uploadImageServer(type_photo: String, imageName:String, imageData: ByteArray,
-                                  type_auth: String, value_auth: String) {
+                                  type_auth: String, value_auth: String, user: User) {
         val postURL =  UserRest(this).getUserPictureURL()
         //imageData?: return
         val request = object : VolleyMultipartRequest(
                 Request.Method.POST,
                 postURL,
                 Response.Listener {
-                    var resp = String(it.data)
-                    Log.d("Upload", "response is: $resp")
+                    Log.d("Upload", " $type_photo response is: "+String(it.data))
+                    try {
+                        val j_response = JSONObject(String(it.data))
+                        uploadDataFragment?.terminateProgress( type_photo, j_response.getBoolean("success"))
+                        if(!j_response.getBoolean("success")){
+                            showMessage("No se subir la foto al servidor "+j_response.getString("reason"))
+                        } else {
+                            //Si se guardo exitosamente, actualizamos y preguntamos por la siguiente imagen
+                            if( type_photo == UploadDataFragment.UPLOAD_TYPE_PICTURE_1 ){
+                                user.picture_1_online = true
+                                backUpdate( user )
+                                uploadDataFragment.sendUserImages( user )
+                            }
+
+                            if( type_photo == UploadDataFragment.UPLOAD_TYPE_PICTURE_2 ){
+                                user.picture_2_online = true
+                                backUpdate( user )
+                                uploadDataFragment.sendUserImages( user )
+                            }
+
+                            if( type_photo == UploadDataFragment.UPLOAD_TYPE_SELFIE ){
+                                user.selfie_online = true
+                                user.state = User.UNREVISED_STATE
+                                updateUser( user )
+                            }
+
+                        }
+                    }catch ( j_error: JSONException ){
+                        j_error.printStackTrace()
+                        showMessage("No se pudo leer la respuesta del servidor")
+                    }
+
                 },
                 Response.ErrorListener {
                     Log.d("Upload", "error is: $it")
+                    showMessage("No se pudo conectar al servidor")
                 }
         ) {
             override fun getByteData(): MutableMap<String, FileDataPart> {
@@ -514,13 +566,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     //@Throws(IOException::class)
-    fun uploadImageUriEmail(type_photo: String, uri: String,
-                            type_auth: String, value_auth: String) {
+    fun uploadUriServer(type_photo: String, uri: String,
+                            type_auth: String, value_auth: String, user: User) {
         Log.d("Upload", uri)
         val photo = File( Uri.parse(uri).path )
         val inputStream = contentResolver.openInputStream(Uri.parse(uri))
         inputStream?.buffered()?.use {
-            uploadImageServer(type_photo, photo.name, it.readBytes(), type_auth, value_auth)
+            uploadImageServer(type_photo, photo.name, it.readBytes(), type_auth, value_auth, user)
         }
     }
 

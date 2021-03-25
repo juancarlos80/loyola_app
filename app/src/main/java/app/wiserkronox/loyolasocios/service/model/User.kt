@@ -61,6 +61,15 @@ class User () : Serializable {
     var state: String = ""
     @ColumnInfo
     var phone_number: String = ""
+
+    @ColumnInfo
+    var data_online: Boolean = false
+    @ColumnInfo
+    var picture_1_online: Boolean = false
+    @ColumnInfo
+    var picture_2_online: Boolean = false
+    @ColumnInfo
+    var selfie_online: Boolean = false
 }
 
 

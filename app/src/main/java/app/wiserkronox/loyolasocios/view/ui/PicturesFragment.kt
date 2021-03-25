@@ -132,7 +132,7 @@ class PicturesFragment : Fragment() {
             Toast.makeText(activity, "Debes subir la foto del reverso de tu ci", Toast.LENGTH_SHORT).show()
             return
         }
-        if( TextUtils.isEmpty(cUser?.picture_1) ){
+        if( TextUtils.isEmpty(cUser?.selfie) ){
             Toast.makeText(activity, "Debes subir tu una autofoto personal (selfie)", Toast.LENGTH_SHORT).show()
             return
         }

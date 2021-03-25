@@ -34,6 +34,7 @@ class UserRest (val context: Context){
                 jsonBody.put("last_name_2", user.last_name_2)
             }
             jsonBody.put("id_number", user.id_number)
+            jsonBody.put("id_member", user.id_member)
             jsonBody.put("extension", user.extension)
             jsonBody.put("birthdate", user.birthdate)
             jsonBody.put("phone_number", user.phone_number)

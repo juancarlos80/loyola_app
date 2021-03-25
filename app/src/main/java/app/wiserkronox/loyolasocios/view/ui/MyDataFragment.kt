@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider
 import app.wiserkronox.loyolasocios.R
 import app.wiserkronox.loyolasocios.service.model.User
 import app.wiserkronox.loyolasocios.viewmodel.MyDataViewModel
-import java.util.*
 
 
 class MyDataFragment : Fragment() {
@@ -154,14 +153,14 @@ class MyDataFragment : Fragment() {
     }
 
     fun getCalendarData( date: String, position: Int ): Int {
-        if( date == "" && position == 0) return 2000
+        if( date == "" && position == 0) return 1980
         if( date == "" && position == 1 ) return 0
         if( date == "" && position == 2 ) return 1
         val lDate = date.split("/")
         return Integer.parseInt(lDate[position]?:"0")
     }
 
-    fun getCalendar(day: Int, month: Int, year: Int): Calendar? {
+    /*fun getCalendar(day: Int, month: Int, year: Int): Calendar? {
         val date = Calendar.getInstance()
         date[Calendar.YEAR] = year
         // We will have to increment the month field by 1
@@ -169,6 +168,5 @@ class MyDataFragment : Fragment() {
         // As the month indexing starts with 0
         date[Calendar.DAY_OF_MONTH] = day
         return date
-    }
-
+    }*/
 }

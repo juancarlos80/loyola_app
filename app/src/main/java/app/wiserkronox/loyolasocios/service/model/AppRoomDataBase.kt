@@ -1,7 +1,6 @@
 package app.wiserkronox.loyolasocios.service.model
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -14,7 +13,7 @@ import kotlinx.coroutines.launch
     entities = arrayOf(
         User::class
     ),
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 
@@ -67,13 +66,7 @@ import kotlinx.coroutines.launch
         }
 
         suspend fun populateDatabase(userDao: UserDao){
-            Log.d("ROOM", "populatin database")
-            userDao.deleteAll()
-
-            /*var user = User("Juans", "asdasd@asd.com", "asdsdd")
-            userDao.insert(user)
-            user = User("Victors", "sssaasdasd@hotma.com", "a42sdsdd")
-            userDao.insert(user)*/
+            //userDao.deleteAll()
         }
     }
 

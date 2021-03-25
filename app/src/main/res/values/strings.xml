@@ -67,7 +67,7 @@
         <item>EXT</item>
     </string-array>
 
-    <!-- Textos para subir Fotos -->
+    <!-- Textos para registrar Fotos -->
     <string name="subtitle_picture">Autentificación Socio</string>
     <string name="hint_id_member">Número de Socio</string>
     <string name="text_valid_id">Número de Socio VALIDO</string>
@@ -89,5 +89,13 @@
     <string name="text_swicth">Acepto</string>
     <string name="text_swicth_extend">Aceptas haber leido los TERMINOS Y CONDICIONES DE USO de la aplicación y estoy plenamente deacuerdo con ellos</string>
     <string name="btn_send">Enviar</string>
+
+    <!-- Textos para subir datos al servidor -->
+    <string name="title_upload">Subiendo la información al servidor</string>
+    <string name="label_data">Datos del usuario</string>
+    <string name="label_picture_1">Foto Anverso</string>
+    <string name="label_picture_2">Foto Reverso</string>
+    <string name="label_selfie">Autofoto</string>
+    <string name="btn_upload_server">Enviar Información</string>
 
 </resources>
