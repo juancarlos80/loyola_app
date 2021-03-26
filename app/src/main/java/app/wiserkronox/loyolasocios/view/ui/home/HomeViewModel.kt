@@ -1,4 +1,4 @@
-package app.wiserkronox.loyolasocios.view.ui.ui.home
+package app.wiserkronox.loyolasocios.view.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

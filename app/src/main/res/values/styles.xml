@@ -3,9 +3,12 @@
     <color name="main_green">#00884a</color>
     <color name="font_color_home">#c1cbc4</color>
     <color name="back_grey">#989898</color>
+    <color name="back2_grey">#d1d2d4</color>
     <color name="orange_1">#f3702d</color>
     <color name="orange_2">#f99b29</color>
     <color name="yellow">#f4e01b</color>
+    <color name="deep_green">#014727</color>
+    <color name="deep_grey">#555555</color>
 
     <style name="edit_login" parent="@style/Widget.AppCompat.EditText">
         <item name="android:textColor">@color/white</item>
@@ -43,6 +46,24 @@
         <item name="android:textColor">@color/font_color_home</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">32sp</item>
+    </style>
+
+    <style name="title_light" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/deep_green</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">32sp</item>
+    </style>
+
+    <style name="data_label" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/main_green</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="data_text" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/deep_grey</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="MySpinnerDatePickerStyle" parent="android:Theme.Material.Dialog">

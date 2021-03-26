@@ -1,4 +1,4 @@
-package app.wiserkronox.loyolasocios.view.ui.ui.home
+package app.wiserkronox.loyolasocios.view.ui.home
 
 import android.net.Uri
 import android.os.Bundle
@@ -64,7 +64,6 @@ class HomeFragment : Fragment() {
                 dr.cornerRadius = Math.max(src.width, src.height) / 2.0f
                 userSelfie.setImageDrawable(dr)
             }
-
         }
 
 

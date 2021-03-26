@@ -97,8 +97,8 @@
     <!-- Textos para subir datos al servidor -->
     <string name="title_upload">Subiendo la información al servidor</string>
     <string name="label_data">Datos del usuario</string>
-    <string name="label_picture_1">Foto Anverso</string>
-    <string name="label_picture_2">Foto Reverso</string>
+    <string name="label_picture_1">Foto Anverso CI</string>
+    <string name="label_picture_2">Foto Reverso CI</string>
     <string name="label_selfie">Autofoto</string>
     <string name="btn_upload_server">Enviar Información</string>
 

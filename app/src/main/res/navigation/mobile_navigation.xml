@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="app.wiserkronox.loyolasocios.view.ui.ui.home.HomeFragment"
+        android:name="app.wiserkronox.loyolasocios.view.ui.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="app.wiserkronox.loyolasocios.view.ui.MyDataRegisterFragment"
+        android:id="@+id/nav_data"
+        android:name="app.wiserkronox.loyolasocios.view.ui.home.ViewDataFragment"
         android:label="@string/menu_datos"
-        tools:layout="@layout/fragment_my_data_register" />
+        tools:layout="@layout/fragment_view_data" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="app.wiserkronox.loyolasocios.view.ui.ui.slideshow.SlideshowFragment"
+        android:id="@+id/nav_pictures"
+        android:name="app.wiserkronox.loyolasocios.view.ui.home.ViewPicturesFragment"
         android:label="@string/menu_pictures"
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_view_pictures" />
 </navigation>
