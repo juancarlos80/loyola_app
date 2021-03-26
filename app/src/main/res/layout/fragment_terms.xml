@@ -5,6 +5,7 @@
     android:id="@+id/frameLayout5"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_datas"
     tools:context=".view.ui.TermsFragment" >
 
     <TextView
@@ -15,7 +16,8 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="10dp"
         android:text="@string/terms_title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        style="@style/title_dark"
+        android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,8 +27,10 @@
         android:id="@+id/switch_acepto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/text_swicth"
+        android:textColor="@color/font_color_home"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/scrollView2"
         app:layout_constraintTop_toBottomOf="@+id/scrollView2"
@@ -34,12 +38,12 @@
 
     <ScrollView
         android:id="@+id/scrollView2"
-        android:layout_width="311dp"
-        android:layout_height="403dp"
-        android:layout_marginStart="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
+        android:background="@color/main_green"
+        android:padding="20dp"
         app:layout_constraintBottom_toTopOf="@+id/textView12"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +53,8 @@
             android:id="@+id/textView11"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/terms_body" />
+            android:text="@string/terms_body"
+            android:textColor="@color/white" />
 
     </ScrollView>
 
@@ -63,13 +68,16 @@
         android:text="@string/text_swicth_extend"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/white"
         app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btn_term_acept"
+        style="@style/button_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
         android:layout_marginBottom="16dp"
         android:text="@string/btn_send"
         android:visibility="invisible"
@@ -80,6 +88,7 @@
         android:id="@+id/btn_term_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="#DD0101"
         android:text="@string/btn_cancel"

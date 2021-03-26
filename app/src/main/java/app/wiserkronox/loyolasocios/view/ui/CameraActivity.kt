@@ -2,6 +2,9 @@ package app.wiserkronox.loyolasocios.view.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +16,7 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
+import androidx.camera.core.impl.utils.Exif
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
@@ -23,11 +27,14 @@ import app.wiserkronox.loyolasocios.service.model.User
 import app.wiserkronox.loyolasocios.viewmodel.UserViewModel
 import app.wiserkronox.loyolasocios.viewmodel.UserViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.io.BufferedOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
 
 class CameraActivity : AppCompatActivity() {
 
@@ -96,7 +103,7 @@ class CameraActivity : AppCompatActivity() {
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+                    this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
 
 
@@ -122,53 +129,61 @@ class CameraActivity : AppCompatActivity() {
 
         // Create time-stamped output file to hold the image
         val photoFile = File(
-            outputDirectory,
-            SimpleDateFormat(FILENAME_FORMAT, Locale.US
-            ).format(System.currentTimeMillis()) + ".jpg")
+                outputDirectory,
+                SimpleDateFormat(FILENAME_FORMAT, Locale.US
+                ).format(System.currentTimeMillis()) + ".jpg")
 
         // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
             .build()
 
+        //imageCapture.targetRotation = viewFinder.display.rotation
+
         // Set up image capture listener, which is triggered after photo has
         // been taken
         imageCapture.takePicture(
-            outputOptions, ContextCompat.getMainExecutor(this), object : ImageCapture.OnImageSavedCallback {
-                override fun onError(exc: ImageCaptureException) {
-                    Log.e(CameraActivity.TAG, "No se pudo tomar la foto: ${exc.message}", exc)
+                outputOptions, ContextCompat.getMainExecutor(this), object : ImageCapture.OnImageSavedCallback {
+            override fun onError(exc: ImageCaptureException) {
+                Log.e(CameraActivity.TAG, "No se pudo tomar la foto: ${exc.message}", exc)
+            }
+
+            override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                val savedUri = Uri.fromFile(photoFile)
+                Log.d(CameraActivity.TAG, "url: " + savedUri.path)
+
+                val exif = Exif.createFromFile(photoFile)
+                val rotation = exif.rotation
+                Log.d(TAG, "rotacion: " + rotation)
+                if( rotation > 0 ){
+                    rotateImageFile(photoFile.path, rotation)
                 }
-
-                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val savedUri = Uri.fromFile(photoFile)
-                    Log.d(CameraActivity.TAG, "url: "+savedUri.path )
-
-                    //val msg = "La foto se guardo: $savedUri"
-                    //Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-                    //Log.d(CameraActivity.TAG, msg)
-                    when ( current_request ) {
-                        REQUEST_PICTURE_1 -> {
-                            if( !user.picture_1.equals("") ){
-                                deleteIfExists( user.picture_1 )
-                            }
-                            user.picture_1 = savedUri.toString()
+                //val msg = "La foto se guardo: $savedUri"
+                //Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                //Log.d(CameraActivity.TAG, msg)
+                when (current_request) {
+                    REQUEST_PICTURE_1 -> {
+                        if (!user.picture_1.equals("")) {
+                            deleteIfExists(user.picture_1)
                         }
-                        REQUEST_PICTURE_2 -> {
-                            if( !user.picture_2.equals("") ){
-                                deleteIfExists( user.picture_2 )
-                            }
-                            user.picture_2 = savedUri.toString()
-                        }
-                        REQUEST_SELFIE -> {
-                            if( !user.selfie.equals("") ){
-                                deleteIfExists( user.selfie )
-                            }
-                            user.selfie = savedUri.toString()
-                        }
+                        user.picture_1 = savedUri.toString()
                     }
-                    userViewModel.update(user)
-                    finish()
+                    REQUEST_PICTURE_2 -> {
+                        if (!user.picture_2.equals("")) {
+                            deleteIfExists(user.picture_2)
+                        }
+                        user.picture_2 = savedUri.toString()
+                    }
+                    REQUEST_SELFIE -> {
+                        if (!user.selfie.equals("")) {
+                            deleteIfExists(user.selfie)
+                        }
+                        user.selfie = savedUri.toString()
+                    }
                 }
-            })
+                userViewModel.update(user)
+                finish()
+            }
+        })
 
     }
 
@@ -181,18 +196,18 @@ class CameraActivity : AppCompatActivity() {
 
             // Preview
             val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(viewFinder.surfaceProvider)
-                }
+                    .build()
+                    .also {
+                        it.setSurfaceProvider(viewFinder.surfaceProvider)
+                    }
 
             imageCapture = ImageCapture.Builder()
-                .build()
+                    .build()
 
             // Select back camera as a default
             val cameraSelector =
-                if( back_camera) CameraSelector.DEFAULT_BACK_CAMERA
-                else CameraSelector.DEFAULT_FRONT_CAMERA
+                    if (back_camera) CameraSelector.DEFAULT_BACK_CAMERA
+                    else CameraSelector.DEFAULT_FRONT_CAMERA
 
             try {
                 // Unbind use cases before rebinding
@@ -200,7 +215,7 @@ class CameraActivity : AppCompatActivity() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture
+                        this, cameraSelector, preview, imageCapture
                 )
 
             } catch (exc: Exception) {
@@ -213,7 +228,7 @@ class CameraActivity : AppCompatActivity() {
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
-            baseContext, it
+                baseContext, it
         ) == PackageManager.PERMISSION_GRANTED
     }
 
@@ -221,7 +236,7 @@ class CameraActivity : AppCompatActivity() {
     private fun getOutputDirectory(): File {
         val mediaDir = externalMediaDirs.firstOrNull()?.let {
             File(it, resources.getString(R.string.app_name)
-                    +resources.getString(R.string.photo_directory)).apply { mkdirs() } }
+                    + resources.getString(R.string.photo_directory)).apply { mkdirs() } }
 
         return if (mediaDir != null && mediaDir.exists())
             mediaDir else filesDir
@@ -233,8 +248,8 @@ class CameraActivity : AppCompatActivity() {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray
+            requestCode: Int, permissions: Array<String>, grantResults:
+            IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
@@ -242,9 +257,9 @@ class CameraActivity : AppCompatActivity() {
                 startCamera()
             } else {
                 Toast.makeText(
-                    this,
-                    "Debes otorgar el permiso para poder subir las fotos",
-                    Toast.LENGTH_SHORT
+                        this,
+                        "Debes otorgar el permiso para poder subir las fotos",
+                        Toast.LENGTH_SHORT
                 ).show()
                 finish()
             }
@@ -252,7 +267,27 @@ class CameraActivity : AppCompatActivity() {
     }
 
     fun deleteIfExists(uriFile: String){
-        val image = File( Uri.parse(uriFile)?.path )
+        val image = File(Uri.parse(uriFile)?.path)
         if( image.exists() ) image.delete()
+    }
+
+    private fun rotateImageFile(imagePath: String, degrees: Int){
+        var bitmap = BitmapFactory.decodeFile(imagePath)
+        bitmap = rotate(bitmap, degrees.toFloat())
+        saveImage( bitmap, imagePath )
+    }
+
+    private fun saveImage(image: Bitmap, filename: String): File? {
+        val imageFile = File(filename)
+        val os = BufferedOutputStream(FileOutputStream(imageFile))
+        image.compress(Bitmap.CompressFormat.JPEG, 100, os)
+        os.close()
+        return imageFile
+    }
+
+    private fun rotate(bitmap: Bitmap, degrees: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(degrees)
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 }

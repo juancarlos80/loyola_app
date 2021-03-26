@@ -18,29 +18,32 @@
 
     <!-- Textos del fragmento de registro manual -->
     <string name="text_register_title">Registro de Socios</string>
-    <string name="text_email_label">Ingrese la dirección de su correo electrónico</string>
-    <string name="text_password_label">Ingrese su contraseña</string>
-    <string name="hint_email_1">Correo electrónico</string>
+    <string name="text_email_label">Escriba la dirección de su correo electrónico</string>
+    <string name="text_password_label">Contraseña</string>
+    <string name="hint_email_1">Correo Electrónico</string>
     <string name="hint_email_2">Confirme su correo electrónico</string>
     <string name="hint_password_1">Ingrese su Clave</string>
-    <string name="hint_password_2">Confirme la clave ingresada</string>
+    <string name="hint_password_2">Confirme la Clave</string>
     <string name="btn_cancel">Cancelar</string>
     <string name="btn_next">Continuar</string>
 
 
     <!-- Textos para el Home del Cliente -->
-    <string name="title_activity_home">HomeActivity</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
+    <string name="title_activity_home">Socio Loyola</string>
+    <string name="navigation_drawer_open">Abrir Menú</string>
+    <string name="navigation_drawer_close">Cerrar Menú</string>
+    <string name="nav_header_title">Socios Loyola</string>
+    <string name="nav_header_subtitle">Cooperativa de Ahorro y Crédito Loyola</string>
+    <string name="nav_header_desc">Cooperativa de Ahorro y Crédito Loyolar</string>
 
     <string name="action_logout">Cerrar Sesión</string>
-
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Mis Datos</string>
-    <string name="menu_slideshow">Autentificacion</string>
+    <string name="menu_home">Socio Loyola</string>
+    <string name="menu_datos">Mis Datos</string>
+    <string name="menu_pictures">Mis Fotografías</string>
+    <string name="menu_assembly">Asambleas</string>
+    <string name="text_wellcome">Bienvenido(a)</string>
+    <string name="text_id_member">Nro de Socio</string>
+    <string name="text_inactive_account">Cuenta no verificada</string>
 
 
     <!-- Textos Mis Datos -->
@@ -51,6 +54,7 @@
     <string name="hint_id_number">Número de Identificación</string>
     <string name="hint_birthday">Fecha de Nacimiento</string>
     <string name="hint_phone_numer">Numero de Celular</string>
+    <string name="text_ext">Extensión</string>
     <string name="btn_save">Guardar</string>
 
     <string-array name="list_extensions">

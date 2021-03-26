@@ -46,9 +46,9 @@ class WithoutSessionFragment : Fragment() {
             validarLogin(it)
         }
 
-        root.findViewById<Button>(R.id.btn_lista).setOnClickListener{
+        /*root.findViewById<Button>(R.id.btn_lista).setOnClickListener{
             (activity as MainActivity).goListUsers()
-        }
+        }*/
 
         return root
     }

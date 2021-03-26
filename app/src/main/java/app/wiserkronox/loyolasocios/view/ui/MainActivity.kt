@@ -28,7 +28,6 @@ import app.wiserkronox.loyolasocios.viewmodel.UserViewModelFactory
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -180,18 +179,18 @@ class MainActivity : AppCompatActivity() {
             if( user_local == null ){
                 val user = User()
                 user.oauth_provider = "google"
-                user.oauth_uid = account?.id ?:""
-                user.names = account?.givenName?:""
-                user.last_name_1 = account?.familyName ?: ""
-                user.email = account?.email?:""
-                user.picture = account?.photoUrl.toString()
+                user.oauth_uid = account.id ?:""
+                user.names = account.givenName?:""
+                user.last_name_1 = account.familyName ?: ""
+                user.email = account.email?:""
+                user.picture = account.photoUrl.toString()
                 registerGoogleUser(user)
             } else {
                 //Actualizamos el usuario
-                user_local.names = account?.givenName?:""
-                user_local.last_name_1 = account?.familyName ?: ""
-                user_local.email = account?.email?:""
-                user_local.picture = account?.photoUrl.toString()
+                user_local.names = account.givenName?:""
+                user_local.last_name_1 = account.familyName ?: ""
+                user_local.email = account.email?:""
+                user_local.picture = account.photoUrl.toString()
 
                 if( user_local.state == "")
                     user_local.state = User.REGISTER_LOGIN_STATE
@@ -209,7 +208,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, "Id usuario nuevo " + id)
                     var user = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid(user.oauth_uid)
                     user?.let{
-                        defineDestination(user)
+                        defineDestination(it)
                     }
                 } else {
                     goFailLogin("NO se pudo insertar el usuario ")
@@ -291,7 +290,7 @@ class MainActivity : AppCompatActivity() {
 
     fun goRegisterData(cUser: User){
         Log.d(TAG, "Ir al fragmento de mis datos")
-        val fragment = MyDataFragment.newInstance(cUser)
+        val fragment = MyDataRegisterFragment.newInstance(cUser)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragment_container_view, fragment)
         //transaction.addToBackStack(null)
@@ -305,7 +304,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun goRegisterPictures(cUser: User){
-        val fragment = PicturesFragment.newInstance(cUser)
+        val fragment = PicturesRegisterFragment.newInstance(cUser)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragment_container_view, fragment)
         transaction.setReorderingAllowed(true)
@@ -447,7 +446,7 @@ class MainActivity : AppCompatActivity() {
         return networkInfo?.isConnected == true
     }
 
-    fun getUserFromServerByEmailPassord(email: String, password: String){
+    /*fun getUserFromServerByEmailPassord(email: String, password: String){
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
         val url = "http://www.google.com"
@@ -465,7 +464,7 @@ class MainActivity : AppCompatActivity() {
         // Add the request to the RequestQueue.
         queue.add(stringRequest)
 
-    }
+    }*/
 
     fun uploadUserDataServer(user: User){
         val userRest = UserRest(this)
@@ -492,7 +491,8 @@ class MainActivity : AppCompatActivity() {
                     Log.e(TAG, error.toString())
                     error.printStackTrace()
                     showMessage("Error de conexión con el servidor")
-                    goTerms(user)
+                    uploadDataFragment.terminateProgress("data", false)
+                    //goTerms(user)
                 }
         )
 

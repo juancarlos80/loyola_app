@@ -65,6 +65,8 @@ class UploadDataFragment : Fragment() {
             }
         }
 
+        btnUpload.visibility = Button.INVISIBLE
+
         sendUserData()
         return root
     }

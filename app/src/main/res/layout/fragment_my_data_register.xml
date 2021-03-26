@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ui.MyDataFragment">
+    android:background="@drawable/background_datas"
+    tools:context=".view.ui.MyDataRegisterFragment">
 
     <TextView
         android:id="@+id/textView2"
@@ -13,6 +14,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="16dp"
         android:text="@string/subtitle_my_data"
+        style="@style/title_dark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,40 +27,44 @@
         android:inputType="textPersonName"
         android:text=""
         android:hint="@string/hint_names"
+        style="@style/edit_login"
         app:layout_constraintStart_toStartOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <EditText
         android:id="@+id/edit_last_name_1"
+        style="@style/edit_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="15dp"
         android:ems="10"
+        android:hint="@string/hint_last_name_1"
         android:inputType="textPersonName"
         android:text=""
-        android:hint="@string/hint_last_name_1"
         app:layout_constraintStart_toStartOf="@+id/edit_names"
         app:layout_constraintTop_toBottomOf="@+id/edit_names" />
 
     <EditText
         android:id="@+id/edit_last_name_2"
+        style="@style/edit_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="15dp"
         android:ems="10"
-        android:inputType="textPersonName"
         android:hint="@string/hint_last_name_2"
+        android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="@+id/edit_last_name_1"
         app:layout_constraintTop_toBottomOf="@+id/edit_last_name_1" />
 
     <EditText
         android:id="@+id/edit_id_number"
+        style="@style/edit_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="15dp"
         android:ems="10"
-        android:inputType="number"
         android:hint="@string/hint_id_number"
+        android:inputType="number"
         app:layout_constraintStart_toStartOf="@+id/edit_last_name_2"
         app:layout_constraintTop_toBottomOf="@+id/edit_last_name_2" />
 
@@ -72,28 +78,17 @@
         app:layout_constraintStart_toEndOf="@+id/edit_id_number"
         app:layout_constraintTop_toTopOf="@+id/edit_id_number" />
 
-    <DatePicker
-        android:id="@+id/edit_birthday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:calendarViewShown="false"
-        android:datePickerMode="spinner"
-        android:ems="10"
-        android:hint="@string/hint_birthday"
-        app:layout_constraintStart_toStartOf="@+id/edit_id_number"
-        app:layout_constraintTop_toBottomOf="@+id/edit_id_number" />
-
     <EditText
         android:id="@+id/edit_phone_number"
+        style="@style/edit_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="15dp"
         android:ems="10"
-        android:inputType="phone"
         android:hint="@string/hint_phone_numer"
-        app:layout_constraintStart_toStartOf="@+id/edit_birthday"
-        app:layout_constraintTop_toBottomOf="@+id/edit_birthday" />
+        android:inputType="phone"
+        app:layout_constraintStart_toStartOf="@+id/text_birthdate"
+        app:layout_constraintTop_toBottomOf="@+id/text_birthdate" />
 
     <Button
         android:id="@+id/btn_save"
@@ -103,6 +98,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/btn_save"
+        style="@style/button_login"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -113,16 +109,29 @@
         android:layout_marginStart="40dp"
         android:layout_marginLeft="40dp"
         android:text="@string/btn_cancel"
+        style="@style/button_login"
         app:layout_constraintBottom_toBottomOf="@+id/btn_save"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/text_birthdate"
+        style="@style/shape_edit_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="@string/hint_birthday"
+        app:layout_constraintStart_toStartOf="@+id/edit_id_number"
+        app:layout_constraintTop_toBottomOf="@+id/edit_id_number" />
 
     <TextView
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hint_birthday"
-        app:layout_constraintBottom_toTopOf="@+id/edit_birthday"
-        app:layout_constraintStart_toStartOf="@+id/edit_id_number"
-        app:layout_constraintTop_toBottomOf="@+id/edit_id_number" />
+        android:text="@string/text_ext"
+        android:textColor="@color/font_color_home"
+        app:layout_constraintBottom_toTopOf="@+id/spinner_extension"
+        app:layout_constraintStart_toStartOf="@+id/spinner_extension" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

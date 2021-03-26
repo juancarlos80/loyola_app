@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="app.wiserkronox.loyolasocios.view.ui.MyDataFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_my_data" />
+        android:name="app.wiserkronox.loyolasocios.view.ui.MyDataRegisterFragment"
+        android:label="@string/menu_datos"
+        tools:layout="@layout/fragment_my_data_register" />
 
     <fragment
         android:id="@+id/nav_slideshow"
         android:name="app.wiserkronox.loyolasocios.view.ui.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
+        android:label="@string/menu_pictures"
         tools:layout="@layout/fragment_slideshow" />
 </navigation>

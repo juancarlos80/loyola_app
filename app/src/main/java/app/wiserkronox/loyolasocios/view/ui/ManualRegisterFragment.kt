@@ -2,6 +2,7 @@ package app.wiserkronox.loyolasocios.view.ui
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,7 @@ class ManualRegisterFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         val root: View = inflater.inflate(R.layout.fragment_manual_register, container, false)
 
@@ -92,6 +93,13 @@ class ManualRegisterFragment : Fragment() {
                 user.email = email_1.text.toString()
                 user.password = password_1.text.toString()
                 user.state = User.REGISTER_LOGIN_STATE
+
+                if( activity == null )
+                Log.d("FK", "Ac nula")
+                else {
+                    Log.d("FK", "Nooo Ac nula")
+                }
+
                 (activity as MainActivity).registerManualUser( user )
             }
         }

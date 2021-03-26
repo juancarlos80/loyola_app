@@ -13,6 +13,8 @@ class User () : Serializable {
         var REGISTER_PICTURE_STATE: String = "3"
         var UPLOAD_DATA_SERVER: String = "4"
         var UNREVISED_STATE: String = "5"
+        var ACTIVE_STATE: String = "6"
+        var INACTIVE_STATE: String = "7"
     }
 
     @PrimaryKey(autoGenerate = true)

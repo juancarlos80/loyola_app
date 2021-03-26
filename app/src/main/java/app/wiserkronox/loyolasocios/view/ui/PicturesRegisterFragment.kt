@@ -17,7 +17,7 @@ import app.wiserkronox.loyolasocios.service.model.User
 
 
 
-class PicturesFragment : Fragment() {
+class PicturesRegisterFragment : Fragment() {
 
     private val CURRENT_USER_KEY = "current_user_key"
     private var cUser: User? = null
@@ -32,7 +32,7 @@ class PicturesFragment : Fragment() {
     companion object {
         @JvmStatic
         fun newInstance(cUser: User) =
-                PicturesFragment().apply {
+                PicturesRegisterFragment().apply {
                     arguments = Bundle().apply {
                         putSerializable(CURRENT_USER_KEY, cUser)
                     }
@@ -49,7 +49,7 @@ class PicturesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val root: View = inflater.inflate(R.layout.fragment_pictures, container, false)
+        val root: View = inflater.inflate(R.layout.fragment_pictures_register, container, false)
 
 
         id_member = root.findViewById(R.id.edit_id_member)

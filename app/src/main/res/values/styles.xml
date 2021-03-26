@@ -1,4 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="main_green">#00884a</color>
+    <color name="font_color_home">#c1cbc4</color>
+    <color name="back_grey">#989898</color>
+    <color name="orange_1">#f3702d</color>
+    <color name="orange_2">#f99b29</color>
+    <color name="yellow">#f4e01b</color>
+
+    <style name="edit_login" parent="@style/Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/font_color_home</item>
+        <item name="android:background">@drawable/shape_input_login</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingRight">10dp</item>
+    </style>
+
+    <style name="shape_edit_login">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/font_color_home</item>
+        <item name="android:background">@drawable/shape_input_login</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingRight">10dp</item>
+    </style>
+
+    <style name="button_login" >
+        <item name="android:textColor">@color/white</item>
+        <item name="android:backgroundTint">@color/orange_2</item>
+    </style>
+
+    <style name="button_secundary" >
+        <item name="android:textColor">@color/black</item>
+        <item name="android:backgroundTint">@color/font_color_home</item>
+    </style>
+
+    <style name="title_dark" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/font_color_home</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">32sp</item>
+    </style>
+
+    <style name="MySpinnerDatePickerStyle" parent="android:Theme.Material.Dialog">
+        <item name="android:datePickerStyle">@style/MySpinnerDatePicker</item>
+    </style>
+
+    <style name="MySpinnerDatePicker" parent="android:Widget.Material.DatePicker">
+        <item name="android:datePickerMode">spinner</item>
+    </style>
+
 </resources>
