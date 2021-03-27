@@ -353,6 +353,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun goThanks( ){
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace<ThanksFragment>(R.id.fragment_container_view)
+        }
+    }
+
     /***************************************************************************************/
     // Funciones para el registro de usuarios
     /***************************************************************************************/
@@ -528,7 +535,8 @@ class MainActivity : AppCompatActivity() {
                             if( type_photo == UploadDataFragment.UPLOAD_TYPE_SELFIE ){
                                 user.selfie_online = true
                                 user.state = User.COMPLETE_STATE
-                                updateUser( user )
+                                backUpdate( user )
+                                goThanks()
                             }
 
                         }

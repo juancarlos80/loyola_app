@@ -43,8 +43,15 @@
     <string name="menu_assembly">Asambleas</string>
     <string name="text_wellcome">Bienvenido(a)</string>
     <string name="text_id_member">Nro de Socio</string>
-    <string name="text_inactive_account">Cuenta no verificada</string>
+    <string name="text_inactive_account">Cuenta pendiente a revisión</string>
+    <string name="btn_fix_data">Corregir Datos</string>
+    <string name="icon_user_status">Estado del socio</string>
 
+    <!-- Textos Mis Datos -->
+    <string name="title_thanks">¡Gracias por Registrarse!</string>
+    <string name="body_thanks">En breve, personal de plataforma validará toda la información
+        proporcionada para ACTIVAR su Cuenta de SOCIO LOYOLA</string>
+    <string name="btn_acept">Aceptar</string>
 
     <!-- Textos Mis Datos -->
     <string name="subtitle_my_data">Datos Personales</string>

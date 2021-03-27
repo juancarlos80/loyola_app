@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
@@ -34,6 +35,7 @@ class HomeFragment : Fragment() {
     private  lateinit var userIDMember: TextView
     private  lateinit var userStatus: ImageView
     private  lateinit var inActiveStatus: TextView
+    private  lateinit var btnReview: Button
 
     companion object {
         private const val TAG = "HomeFragment"
@@ -53,6 +55,7 @@ class HomeFragment : Fragment() {
         userIDMember = root.findViewById(R.id.text_user_id_member)
         userStatus = root.findViewById(R.id.image_status_user)
         inActiveStatus = root.findViewById(R.id.text_inactive_status)
+        btnReview = root.findViewById(R.id.btn_fix_data)
 
         val user = LoyolaApplication.getInstance()?.user
 
@@ -68,26 +71,11 @@ class HomeFragment : Fragment() {
                 userSelfie.setImageDrawable(dr)
             }
 
-            if( it.state_activation == User.STATE_USER_INACTIVE ){
+            //if( it.state_activation == User.STATE_USER_INACTIVE ){
                 getUserStatusFromServer(it)
-            }
+            //}
         }
 
-
-
-
-        /*homeViewModel.user.observe(viewLifecycleOwner, Observer {
-            val res: Resources = resources
-            val inputStream: InputStream? = activity?.baseContext?.contentResolver?.openInputStream(Uri.parse(it.selfie))
-            val options = BitmapFactory.Options()
-            options.inJustDecodeBounds = true
-            val src = BitmapFactory.decodeStream(inputStream, null, options);
-            if( src != null ) {
-                val dr = RoundedBitmapDrawableFactory.create(res, src)
-                dr.cornerRadius = Math.max(src.width, src.height) / 2.0f
-                userSelfie.setImageDrawable(dr)
-            }
-        })*/
         return root
     }
 
@@ -130,7 +118,7 @@ class HomeFragment : Fragment() {
                     if( status.getString("status") == "activo" ){
                         user.state_activation = User.STATE_USER_ACTIVE
                     } else {
-                        user.state_activation = User.STATE_USER_INACTIVE
+                        user.state_activation = User.STATE_USER_REJECT
                     }
                     user.feedback_activation = status.getString("observations")
                     (activity as HomeActivity).backUpdate( user )
@@ -147,6 +135,12 @@ class HomeFragment : Fragment() {
         if( user.state_activation == User.STATE_USER_ACTIVE ){
             userStatus.setImageDrawable( activity?.getDrawable(R.drawable.icon_status_user_active))
             inActiveStatus.visibility = TextView.GONE
+            btnReview.visibility = Button.GONE
+        } else if( user.state_activation == User.STATE_USER_REJECT) {
+            userStatus.setImageDrawable( activity?.getDrawable(R.drawable.icon_status_user_inactive))
+            inActiveStatus.text = "Observaciones: "+user.feedback_activation
+            inActiveStatus.visibility = TextView.VISIBLE
+            btnReview.visibility = Button.VISIBLE
         } else {
             userStatus.setImageDrawable( activity?.getDrawable(R.drawable.icon_status_user_inactive))
             inActiveStatus.visibility = TextView.VISIBLE

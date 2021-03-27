@@ -101,7 +101,9 @@ class UploadDataFragment : Fragment() {
             (activity as MainActivity).uploadUriServer(UPLOAD_TYPE_SELFIE, user.selfie, typeAuth, valueAuth, user)
         } else {
             user.state = User.COMPLETE_STATE
-            (activity as MainActivity).updateUser( user )
+            user.state_activation = User.STATE_USER_INACTIVE
+            (activity as MainActivity).backUpdate( user )
+            (activity as MainActivity).goThanks()
         }
     }
 

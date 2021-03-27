@@ -16,6 +16,7 @@ class User () : Serializable {
 
         var STATE_USER_ACTIVE: Int = 0
         var STATE_USER_INACTIVE: Int = 1
+        var STATE_USER_REJECT: Int = 2
     }
 
     @PrimaryKey(autoGenerate = true)
