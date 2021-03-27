@@ -15,6 +15,14 @@ import androidx.lifecycle.ViewModelProvider
 import app.wiserkronox.loyolasocios.R
 import app.wiserkronox.loyolasocios.service.LoyolaApplication
 import app.wiserkronox.loyolasocios.service.model.User
+import app.wiserkronox.loyolasocios.service.repository.LoyolaService
+import app.wiserkronox.loyolasocios.service.repository.UserRest
+import app.wiserkronox.loyolasocios.view.ui.HomeActivity
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import org.json.JSONException
+import org.json.JSONObject
 
 
 class HomeFragment : Fragment() {
@@ -26,6 +34,10 @@ class HomeFragment : Fragment() {
     private  lateinit var userIDMember: TextView
     private  lateinit var userStatus: ImageView
     private  lateinit var inActiveStatus: TextView
+
+    companion object {
+        private const val TAG = "HomeFragment"
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -44,25 +56,20 @@ class HomeFragment : Fragment() {
 
         val user = LoyolaApplication.getInstance()?.user
 
-        Log.d("Frag", "useer session: " + user?.selfie)
-
-        user.let {
-            userName.text = it?.names+" "+it?.last_name_1+" "+it?.last_name_2
-            userIDMember.text = it?.id_member
-
-            if( it?.state == User.ACTIVE_STATE ){
-                userStatus.setImageDrawable( activity?.getDrawable(R.drawable.icon_status_user_active))
-                inActiveStatus.visibility = TextView.GONE
-            } else {
-                userStatus.setImageDrawable( activity?.getDrawable(R.drawable.icon_status_user_inactive))
-                inActiveStatus.visibility = TextView.VISIBLE
-            }
+        user?.let {
+            userName.text = it.names+" "+it.last_name_1+" "+it.last_name_2
+            userIDMember.text = it.id_member
+            updateStatusIcon( it )
 
             val src = MediaStore.Images.Media.getBitmap(activity?.getContentResolver(), Uri.parse(it?.selfie))
             if( src != null ) {
                 val dr = RoundedBitmapDrawableFactory.create(resources, src)
                 dr.cornerRadius = Math.max(src.width, src.height) / 2.0f
                 userSelfie.setImageDrawable(dr)
+            }
+
+            if( it.state_activation == User.STATE_USER_INACTIVE ){
+                getUserStatusFromServer(it)
             }
         }
 
@@ -83,4 +90,67 @@ class HomeFragment : Fragment() {
         })*/
         return root
     }
+
+
+
+
+    fun getUserStatusFromServer(user: User){
+        activity?.let{
+            val userRest = UserRest(it)
+            val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.POST, userRest.getUserStatusURL(),
+                userRest.getUserLoginJson(user),
+                Response.Listener { response ->
+                    Log.d(TAG, "Response is: ${response.toString()}")
+                    if (response.getBoolean("success")) {
+                        Log.d(TAG, "Exito")
+                        processStatusResponse(user, response)
+                    } else {
+                        (activity as HomeActivity).showMessage(response.getString("reason"))
+                    }
+                },
+                Response.ErrorListener { error ->
+                    Log.e(TAG, error.toString())
+                    error.printStackTrace()
+                    (activity as HomeActivity).showMessage("Error de conexión con el servidor")
+                }
+            )
+
+            // Add the request to the RequestQueue.
+            LoyolaService.getInstance(it).addToRequestQueue(jsonObjectRequest)
+        }
+    }
+
+    fun processStatusResponse(user: User, jResponse: JSONObject){
+        try{
+            if( jResponse.has("user_status") ){
+                val status = jResponse.getJSONObject("user_status")
+                if( user.feedback_date != status.getString("created_at") ){
+                    user.feedback_date = status.getString("created_at")
+                    if( status.getString("status") == "activo" ){
+                        user.state_activation = User.STATE_USER_ACTIVE
+                    } else {
+                        user.state_activation = User.STATE_USER_INACTIVE
+                    }
+                    user.feedback_activation = status.getString("observations")
+                    (activity as HomeActivity).backUpdate( user )
+                    updateStatusIcon( user )
+                }
+            }
+
+        } catch (j_error: JSONException){
+            j_error.printStackTrace()
+        }
+    }
+
+    fun updateStatusIcon(user: User){
+        if( user.state_activation == User.STATE_USER_ACTIVE ){
+            userStatus.setImageDrawable( activity?.getDrawable(R.drawable.icon_status_user_active))
+            inActiveStatus.visibility = TextView.GONE
+        } else {
+            userStatus.setImageDrawable( activity?.getDrawable(R.drawable.icon_status_user_inactive))
+            inActiveStatus.visibility = TextView.VISIBLE
+        }
+    }
+
 }

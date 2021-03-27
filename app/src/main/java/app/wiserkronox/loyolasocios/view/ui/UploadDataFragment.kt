@@ -100,7 +100,7 @@ class UploadDataFragment : Fragment() {
             progress_selfie.isIndeterminate = true
             (activity as MainActivity).uploadUriServer(UPLOAD_TYPE_SELFIE, user.selfie, typeAuth, valueAuth, user)
         } else {
-            user.state = User.UNREVISED_STATE
+            user.state = User.COMPLETE_STATE
             (activity as MainActivity).updateUser( user )
         }
     }

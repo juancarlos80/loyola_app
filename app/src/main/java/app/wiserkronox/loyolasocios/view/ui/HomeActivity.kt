@@ -3,9 +3,12 @@ package app.wiserkronox.loyolasocios.view.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -16,12 +19,20 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import app.wiserkronox.loyolasocios.R
+import app.wiserkronox.loyolasocios.service.LoyolaApplication
+import app.wiserkronox.loyolasocios.service.model.User
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
+
+    companion object {
+        private const val TAG = "HomeActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +90,8 @@ class HomeActivity : AppCompatActivity() {
             remove("password")
             commit()
 
+            LoyolaApplication.getInstance()?.user = null
+
             val intent = Intent(this@HomeActivity, MainActivity::class.java)
             startActivity(intent)
             finish()
@@ -92,6 +105,22 @@ class HomeActivity : AppCompatActivity() {
 
     fun goHome(){
         navController.navigate(R.id.nav_home)
+    }
+
+    /*********************************************************************************************
+     * Funciones de conexion con el servidor
+     */
+
+    fun showMessage(message: String){
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun backUpdate(user: User){
+        GlobalScope.launch {
+            LoyolaApplication.getInstance()?.repository?.update2(user)
+        }
     }
 
 }

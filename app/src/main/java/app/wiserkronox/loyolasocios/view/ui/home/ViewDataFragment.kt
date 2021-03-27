@@ -25,6 +25,7 @@ class ViewDataFragment : Fragment() {
             root.findViewById<TextView>(R.id.text_last_names).text = user.last_name_1+" "+user.last_name_2
             root.findViewById<TextView>(R.id.text_id_number).text = user.id_number.toString()+" "+user.extension
             root.findViewById<TextView>(R.id.text_birthday).text = user.birthdate
+            root.findViewById<TextView>(R.id.text_phone_number).text = user.phone_number
             root.findViewById<TextView>(R.id.text_email).text = user.email
         } else {
             Toast.makeText( context, "No se encontro el usuario", Toast.LENGTH_SHORT).show()

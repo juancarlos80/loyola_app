@@ -1,7 +1,6 @@
 package app.wiserkronox.loyolasocios.service.repository
 
 import android.content.Context
-import android.util.Log
 import app.wiserkronox.loyolasocios.R
 import app.wiserkronox.loyolasocios.service.model.User
 import org.json.JSONException
@@ -11,6 +10,7 @@ class UserRest (val context: Context){
     companion object{
         var SET_USER_DATA = "set_user_data.php"
         var SET_USER_PICTURE = "upload_user_picture.php"
+        var GET_USER_STATUS = "get_user_status.php"
     }
 
     fun getUserDataURL(): String {
@@ -23,6 +23,12 @@ class UserRest (val context: Context){
         return context.getString(R.string.host_service)+
                 context.getString(R.string.home_service)+
                 SET_USER_PICTURE
+    }
+
+    fun getUserStatusURL(): String {
+        return context.getString(R.string.host_service)+
+                context.getString(R.string.home_service)+
+                GET_USER_STATUS
     }
 
     fun getUserDataJson(user: User): JSONObject? {
@@ -52,13 +58,32 @@ class UserRest (val context: Context){
                 jsonBody.put("password", user.password)
             }
 
-            Log.d("REST", jsonBody.toString())
             return jsonBody
         } catch (e: JSONException) {
             e.printStackTrace()
             return null
         }
     }
+
+    fun getUserLoginJson(user: User): JSONObject? {
+        val jsonBody = JSONObject()
+        return try {
+            if( !user.oauth_uid.equals("") ){
+                jsonBody.put("oauth_uid", user.oauth_uid)
+                jsonBody.put("oauth_provider", user.oauth_provider)
+            }
+
+            if( !user.email.equals("") ) {
+                jsonBody.put("email", user.email)
+            }
+
+            jsonBody
+        } catch (e: JSONException) {
+            e.printStackTrace()
+            null
+        }
+    }
+
 
 
 }

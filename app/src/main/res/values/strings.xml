@@ -51,6 +51,7 @@
     <string name="hint_names">Nombres</string>
     <string name="hint_last_name_1">Primer Apellido</string>
     <string name="hint_last_name_2">Segundo Apellido</string>
+    <string name="hint_last_names">Apellidos</string>
     <string name="hint_id_number">Número de Identificación</string>
     <string name="hint_birthday">Fecha de Nacimiento</string>
     <string name="hint_phone_numer">Numero de Celular</string>
@@ -93,6 +94,7 @@
     <string name="text_swicth">Acepto</string>
     <string name="text_swicth_extend">Aceptas haber leido los TERMINOS Y CONDICIONES DE USO de la aplicación y estoy plenamente deacuerdo con ellos</string>
     <string name="btn_send">Enviar</string>
+    <string name="btn_dont_accept">No Acepto</string>
 
     <!-- Textos para subir datos al servidor -->
     <string name="title_upload">Subiendo la información al servidor</string>

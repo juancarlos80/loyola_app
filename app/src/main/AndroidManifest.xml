@@ -16,8 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LoyolaSocios">
-        <activity android:name=".view.ui.CameraActivity"></activity>
-        <activity android:name=".view.ui.MainActivity">
+
+        <activity
+            android:name=".view.ui.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,8 +29,11 @@
         <activity
             android:name=".view.ui.HomeActivity"
             android:label="@string/title_activity_home"
-            android:theme="@style/Theme.LoyolaSocios.NoActionBar" />
-        <activity android:name=".view.ui.ListUserActivity" />
+            android:theme="@style/Theme.LoyolaSocios.NoActionBar"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".view.ui.CameraActivity"></activity>
+
     </application>
 
 </manifest>

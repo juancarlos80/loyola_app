@@ -12,9 +12,10 @@ class User () : Serializable {
         var REGISTER_DATA_STATE: String = "2"
         var REGISTER_PICTURE_STATE: String = "3"
         var UPLOAD_DATA_SERVER: String = "4"
-        var UNREVISED_STATE: String = "5"
-        var ACTIVE_STATE: String = "6"
-        var INACTIVE_STATE: String = "7"
+        var COMPLETE_STATE: String = "5"
+
+        var STATE_USER_ACTIVE: Int = 0
+        var STATE_USER_INACTIVE: Int = 1
     }
 
     @PrimaryKey(autoGenerate = true)
@@ -72,6 +73,13 @@ class User () : Serializable {
     var picture_2_online: Boolean = false
     @ColumnInfo
     var selfie_online: Boolean = false
+
+    @ColumnInfo
+    var state_activation: Int = STATE_USER_INACTIVE
+    @ColumnInfo
+    var feedback_activation: String = ""
+    @ColumnInfo
+    var feedback_date: String = ""
 }
 
 

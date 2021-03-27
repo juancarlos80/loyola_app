@@ -206,8 +206,8 @@ class MainActivity : AppCompatActivity() {
             if (id != null) {
                 if( id > 0 ) {
                     Log.d(TAG, "Id usuario nuevo " + id)
-                    var user = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid(user.oauth_uid)
-                    user?.let{
+                    var user_db = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid(user.oauth_uid)
+                    user_db?.let{
                         defineDestination(it)
                     }
                 } else {
@@ -260,7 +260,7 @@ class MainActivity : AppCompatActivity() {
             User.REGISTER_DATA_STATE -> goRegisterPictures(user)
             User.REGISTER_PICTURE_STATE -> goTerms(user)
             User.UPLOAD_DATA_SERVER -> goUploadData(user)
-            User.UNREVISED_STATE -> goHomeWithEmail(user.email)
+            User.COMPLETE_STATE -> goHome()
             else -> goWithoutSession()
         }
     }
@@ -327,12 +327,6 @@ class MainActivity : AppCompatActivity() {
         transaction.commit()
     }
 
-    // Funcion temporal del demo
-    fun  goListUsers(){
-        val intent = Intent(this@MainActivity, ListUserActivity::class.java)
-        startActivity(intent)
-    }
-
     fun goFailLogin(message: String){
         removeDataUser()
         Handler(Looper.getMainLooper()).post {
@@ -341,9 +335,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun goHomeWithEmail(email: String){
+    fun goHome(){
         val intent = Intent(this@MainActivity, HomeActivity::class.java)
-        intent.putExtra("user_email", email)
         startActivity(intent)
         finish()
     }
@@ -432,6 +425,8 @@ class MainActivity : AppCompatActivity() {
             remove("password")
             commit()
         }
+
+        LoyolaApplication.getInstance()?.user = null
     }
 
 
@@ -532,7 +527,7 @@ class MainActivity : AppCompatActivity() {
 
                             if( type_photo == UploadDataFragment.UPLOAD_TYPE_SELFIE ){
                                 user.selfie_online = true
-                                user.state = User.UNREVISED_STATE
+                                user.state = User.COMPLETE_STATE
                                 updateUser( user )
                             }
 
