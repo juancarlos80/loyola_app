@@ -20,7 +20,6 @@ import app.wiserkronox.loyolasocios.service.repository.LoyolaService
 import app.wiserkronox.loyolasocios.service.repository.UserRest
 import app.wiserkronox.loyolasocios.view.ui.HomeActivity
 import com.android.volley.Request
-import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import org.json.JSONException
 import org.json.JSONObject
@@ -59,6 +58,10 @@ class HomeFragment : Fragment() {
 
         val user = LoyolaApplication.getInstance()?.user
 
+        btnReview.setOnClickListener{
+            (activity as HomeActivity).fixData()
+        }
+
         user?.let {
             userName.text = it.names+" "+it.last_name_1+" "+it.last_name_2
             userIDMember.text = it.id_member
@@ -79,29 +82,26 @@ class HomeFragment : Fragment() {
         return root
     }
 
-
-
-
     fun getUserStatusFromServer(user: User){
         activity?.let{
             val userRest = UserRest(it)
             val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.POST, userRest.getUserStatusURL(),
                 userRest.getUserLoginJson(user),
-                Response.Listener { response ->
-                    Log.d(TAG, "Response is: ${response.toString()}")
-                    if (response.getBoolean("success")) {
-                        Log.d(TAG, "Exito")
-                        processStatusResponse(user, response)
-                    } else {
-                        (activity as HomeActivity).showMessage(response.getString("reason"))
+                    { response ->
+                        Log.d(TAG, "Response is: ${response.toString()}")
+                        if (response.getBoolean("success")) {
+                            Log.d(TAG, "Exito")
+                            processStatusResponse(user, response)
+                        } else {
+                            (activity as HomeActivity).showMessage(response.getString("reason"))
+                        }
+                    },
+                    { error ->
+                        Log.e(TAG, error.toString())
+                        error.printStackTrace()
+                        (activity as HomeActivity).showMessage("Error de conexión con el servidor")
                     }
-                },
-                Response.ErrorListener { error ->
-                    Log.e(TAG, error.toString())
-                    error.printStackTrace()
-                    (activity as HomeActivity).showMessage("Error de conexión con el servidor")
-                }
             )
 
             // Add the request to the RequestQueue.
@@ -124,6 +124,11 @@ class HomeFragment : Fragment() {
                     (activity as HomeActivity).backUpdate( user )
                     updateStatusIcon( user )
                 }
+            } else {
+                user.state_activation = User.STATE_USER_INACTIVE
+                user.feedback_activation = ""
+                (activity as HomeActivity).backUpdate( user )
+                updateStatusIcon( user )
             }
 
         } catch (j_error: JSONException){

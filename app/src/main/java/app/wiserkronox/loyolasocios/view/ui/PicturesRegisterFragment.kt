@@ -65,11 +65,13 @@ class PicturesRegisterFragment : Fragment() {
 
         val btnTakePicture2 = root.findViewById<Button>(R.id.btn_upload_picture_2)
         btnTakePicture2.setOnClickListener {
+            saveidMember()
             ( activity as MainActivity).takePicture(CameraActivity.REQUEST_PICTURE_2)
         }
 
         val btnTakeSelfie = root.findViewById<Button>(R.id.btn_upload_selfie)
         btnTakeSelfie.setOnClickListener {
+            saveidMember()
             ( activity as MainActivity).takePicture(CameraActivity.REQUEST_SELFIE)
         }
 
@@ -123,6 +125,7 @@ class PicturesRegisterFragment : Fragment() {
             Toast.makeText(activity, "Debes ingresar tu código de socio", Toast.LENGTH_SHORT).show()
             return
         }
+        saveidMember()
 
         if( TextUtils.isEmpty(cUser?.picture_1) ){
             Toast.makeText(activity, "Debes subir la foto del anverso de tu ci", Toast.LENGTH_SHORT).show()
@@ -138,7 +141,11 @@ class PicturesRegisterFragment : Fragment() {
         }
 
         cUser?.let{
-            it.state = User.REGISTER_PICTURE_STATE
+            if( (activity as MainActivity).isUpdateDataUser() ){
+                it.state = User.UPLOAD_DATA_SERVER
+            } else {
+                it.state = User.REGISTER_PICTURE_STATE
+            }
             ( activity as MainActivity).updateUser(it)
         }
     }

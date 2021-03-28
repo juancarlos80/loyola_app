@@ -31,7 +31,7 @@ class UserRest (val context: Context){
                 GET_USER_STATUS
     }
 
-    fun getUserDataJson(user: User): JSONObject? {
+    fun getUserDataJson(user: User, upDate: Boolean): JSONObject? {
         val jsonBody = JSONObject()
         try {
             jsonBody.put("names", user.names)
@@ -56,6 +56,9 @@ class UserRest (val context: Context){
 
             if( !user.password.equals("") ) {
                 jsonBody.put("password", user.password)
+            }
+            if( upDate ){
+                jsonBody.put("update_user", upDate)
             }
 
             return jsonBody

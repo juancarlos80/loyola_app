@@ -107,6 +107,23 @@ class HomeActivity : AppCompatActivity() {
         navController.navigate(R.id.nav_home)
     }
 
+    fun fixData(){
+        val user = LoyolaApplication.getInstance()?.user
+        if( user != null ) {
+            //Modificamos el estado del usuario para que se realize la actualizacion de sus datos
+            user.state = User.REGISTER_LOGIN_STATE
+            user.data_online = false
+            user.picture_1_online = false
+            user.picture_2_online = false
+            user.selfie_online = false
+            LoyolaApplication.getInstance()?.user = user
+            val intent = Intent(this@HomeActivity, MainActivity::class.java)
+            intent.putExtra(MainActivity.FLAG_UPDATE_USER_DATA, true)
+            startActivity(intent)
+            finish()
+        }
+    }
+
     /*********************************************************************************************
      * Funciones de conexion con el servidor
      */

@@ -49,9 +49,16 @@ class MainActivity : AppCompatActivity() {
     private val RC_SIGN_IN = 9001
     private var google_request = false
 
+    private var updateDataUser = false
+
     companion object {
         private const val TAG = "MainActivity"
         private val REQUEST_FOR_PHOTO = 101
+        val FLAG_UPDATE_USER_DATA = "update_data"
+    }
+
+    fun isUpdateDataUser (): Boolean {
+        return updateDataUser
     }
 
     lateinit var uploadDataFragment: UploadDataFragment
@@ -73,6 +80,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        updateDataUser = intent.getBooleanExtra(FLAG_UPDATE_USER_DATA, false)
+
         lifecycle.addObserver(MainObserver())
 
         //Primero se verifica si no esta registrado con google
@@ -84,20 +93,27 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        //Si el usario ya esta en sesion entonces no controlamos shared data
+        val user = LoyolaApplication.getInstance()?.user
+        if( user != null ){
+            defineDestination(user)
+            return
+        }
+
         Log.d(TAG, "onResume")
         //Verificamos que no tenga informacion guardada para el inicio de sesion
         val sharedPref = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE) ?: return
         val email = sharedPref.getString("email", "")?:""
         val password = sharedPref.getString("password", "")?:""
 
-        if( !email.equals("") && !password.equals("")){
-            getUserByEmailPassword(email, password)
-            return
-        }
-
         val oauth_uid = sharedPref.getString("oauth_uid", "")?:""
         if( !oauth_uid.equals("")){
             getGoogleStatus()
+            return
+        }
+
+        if( !email.equals("") && !password.equals("")){
+            getUserByEmailPassword(email, password)
             return
         }
 
@@ -186,16 +202,17 @@ class MainActivity : AppCompatActivity() {
                 user.picture = account.photoUrl.toString()
                 registerGoogleUser(user)
             } else {
-                //Actualizamos el usuario
-                user_local.names = account.givenName?:""
-                user_local.last_name_1 = account.familyName ?: ""
-                user_local.email = account.email?:""
-                user_local.picture = account.photoUrl.toString()
-
-                if( user_local.state == "")
+                if( user_local.state == "") {
+                    //Actualizamos el usuario si es primera vez
+                    user_local.names = account.givenName?:""
+                    user_local.last_name_1 = account.familyName ?: ""
+                    user_local.email = account.email?:""
+                    user_local.picture = account.photoUrl.toString()
                     user_local.state = User.REGISTER_LOGIN_STATE
-
-                updateUser(user_local)
+                    updateUser(user_local)
+                } else {
+                    defineDestination( user_local )
+                }
             }
         }
     }
@@ -289,18 +306,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun goRegisterData(cUser: User){
-        Log.d(TAG, "Ir al fragmento de mis datos")
         val fragment = MyDataRegisterFragment.newInstance(cUser)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragment_container_view, fragment)
         //transaction.addToBackStack(null)
         transaction.setReorderingAllowed(true)
         transaction.commit()
-
-        /*supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace<fragment>(R.id.fragment_container_view)
-        }*/
     }
 
     fun goRegisterPictures(cUser: User){
@@ -394,6 +405,7 @@ class MainActivity : AppCompatActivity() {
     fun backUpdate(user: User){
         GlobalScope.launch {
             LoyolaApplication.getInstance()?.repository?.update2(user)
+            LoyolaApplication.getInstance()?.user = user
         }
     }
 
@@ -436,9 +448,6 @@ class MainActivity : AppCompatActivity() {
         LoyolaApplication.getInstance()?.user = null
     }
 
-
-
-
     /**********************************************************************************************/
     //Operaciones de Red
     /**********************************************************************************************/
@@ -472,10 +481,10 @@ class MainActivity : AppCompatActivity() {
         val userRest = UserRest(this)
         val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.POST, userRest.getUserDataURL(),
-                userRest.getUserDataJson(user),
-                Response.Listener { response ->
+                userRest.getUserDataJson(user, updateDataUser),
+                { response ->
 
-                    Log.d(TAG, "Response is: ${response.toString()}")
+                    Log.d(TAG, "Response is: $response")
                     if (response.getBoolean("success")) {
                         Log.d(TAG, "Exito")
 
@@ -488,13 +497,11 @@ class MainActivity : AppCompatActivity() {
                     uploadDataFragment.terminateProgress("data", response.getBoolean("success"))
 
                 },
-                Response.ErrorListener { error ->
-                    // TODO: Handle error
+                { error ->
                     Log.e(TAG, error.toString())
                     error.printStackTrace()
                     showMessage("Error de conexión con el servidor")
                     uploadDataFragment.terminateProgress("data", false)
-                    //goTerms(user)
                 }
         )
 
@@ -502,7 +509,6 @@ class MainActivity : AppCompatActivity() {
         LoyolaService.getInstance(this).addToRequestQueue(jsonObjectRequest)
 
     }
-    //private var imageData: ByteArray? = null
 
     private fun uploadImageServer(type_photo: String, imageName:String, imageData: ByteArray,
                                   type_auth: String, value_auth: String, user: User) {
@@ -535,6 +541,7 @@ class MainActivity : AppCompatActivity() {
                             if( type_photo == UploadDataFragment.UPLOAD_TYPE_SELFIE ){
                                 user.selfie_online = true
                                 user.state = User.COMPLETE_STATE
+                                user.state_activation = User.STATE_USER_INACTIVE
                                 backUpdate( user )
                                 goThanks()
                             }
