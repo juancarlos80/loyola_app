@@ -10,10 +10,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import app.wiserkronox.loyolasocios.R
 import app.wiserkronox.loyolasocios.service.LoyolaApplication
 import app.wiserkronox.loyolasocios.service.model.User
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class ManualRegisterFragment : Fragment() {
@@ -103,8 +103,8 @@ class ManualRegisterFragment : Fragment() {
             return
         }
 
-        lifecycleScope.launch {
-            (activity as MainActivity).goLoader()
+        (activity as MainActivity).goLoader()
+        GlobalScope.launch {
             val user_reg = LoyolaApplication.getInstance()?.repository?.getUserEmail(email_1.text.toString())
             if( user_reg != null ){
                 (activity as MainActivity).goFailLogin("El correo electrónico que intenta registrar ya esta en uso")
