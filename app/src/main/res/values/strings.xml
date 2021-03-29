@@ -117,7 +117,14 @@
     <string name="date_demo">19 | Diciembre | 2020</string>
     <string name="hint_memorys">Memorias</string>
     <string name="hint_results">Resultados</string>
+    <string name="hint_journey">Orden del día</string>
 
+    <string name="title_assembly_curremt">Asamblea Actual</string>
     <string name="title_assembly_list">Asambleas Pasadas</string>
+    <string name="no_assembly">No se encontraron registros</string>
+    <string name="btn_login_zoom">Ingresar ZOOM</string>
+    <string name="text_active_state">UD. Está habilitado</string>
+    <string name="tecxt_inactive_state">UD. No está habilitado</string>
+    <string name="text_icon_state">Estado del usuario</string>
 
 </resources>

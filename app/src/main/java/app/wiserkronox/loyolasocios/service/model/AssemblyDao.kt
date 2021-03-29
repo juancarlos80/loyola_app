@@ -23,4 +23,7 @@ interface AssemblyDao {
     @Query("delete from assembly")
     suspend fun deleteAll()
 
+    @Query("select * from assembly where status = :status order by date")
+    fun getAllAssemblysStatus(status: String): List<Assembly>
+
 }

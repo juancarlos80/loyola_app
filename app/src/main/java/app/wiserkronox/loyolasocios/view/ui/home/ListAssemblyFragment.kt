@@ -7,13 +7,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.wiserkronox.loyolasocios.R
 import app.wiserkronox.loyolasocios.service.LoyolaApplication
 import app.wiserkronox.loyolasocios.service.model.Assembly
+import app.wiserkronox.loyolasocios.service.model.User
 import app.wiserkronox.loyolasocios.service.repository.AssemblyRest
 import app.wiserkronox.loyolasocios.service.repository.LoyolaService
 import app.wiserkronox.loyolasocios.view.adapter.AdapterAssembly
@@ -30,6 +34,16 @@ class ListAssemblyFragment : Fragment() {
 
     private  lateinit var loader: ProgressBar
     private  lateinit var recycler: RecyclerView
+    private  lateinit var noAssamblys: TextView
+
+    private  lateinit var title_current: TextView
+    private  lateinit var date_current: TextView
+    private  lateinit var icon_state: ImageView
+    private  lateinit var state_user: TextView
+    private  lateinit var card_current: CardView
+
+    private  lateinit var currentAssembly: Assembly
+
 
     companion object {
         private const val TAG = "HomeFragment"
@@ -44,7 +58,13 @@ class ListAssemblyFragment : Fragment() {
 
         loader = root.findViewById(R.id.progress_assembly)
         recycler = root.findViewById(R.id.recyclerAssembly)
+        noAssamblys = root.findViewById(R.id.text_no_assemblys)
+        card_current = root.findViewById(R.id.card_current)
 
+        title_current = root.findViewById(R.id.text_title_current)
+        date_current = root.findViewById(R.id.text_date_current)
+        icon_state = root.findViewById(R.id.icon_user_state )
+        state_user = root.findViewById(R.id.text_user_state)
 
         getUpdateFromServer()
         return root
@@ -60,10 +80,13 @@ class ListAssemblyFragment : Fragment() {
                     Log.d(TAG, "Response is: ${response.toString()}")
                     if (response.getBoolean("success")) {
                         Log.d(TAG, "Exito")
+                        loader.visibility = ProgressBar.INVISIBLE
                         if (response.has("assemblys")) {
                             val assemblys = response.getJSONArray("assemblys")
                             if (assemblys.length() > 0) {
                                 updateAssemblys(assemblys)
+                            } else {
+                                noAssamblys.visibility = TextView.VISIBLE
                             }
                         }
                     } else {
@@ -111,9 +134,41 @@ class ListAssemblyFragment : Fragment() {
             LoyolaApplication.getInstance()?.repository?.deleteAllAssemblys()
             LoyolaApplication.getInstance()?.repository?.insertAllAssembly(assemblys)
 
-            populateAssemblyList(assemblys)
+            val actives = LoyolaApplication.getInstance()?.repository?.getAllAssemblysStatus("activo")
+            val inactives = LoyolaApplication.getInstance()?.repository?.getAllAssemblysStatus("inactivo")
+
+            inactives?.let {
+                populateAssemblyList(inactives)
+            }
+
+            actives?.let {
+                if( it.size >= 1 ){
+                    populateCurrentAssembly(it.get(0))
+                }
+            }
+
         }
     }
+
+    fun populateCurrentAssembly(current: Assembly){
+        Handler(Looper.getMainLooper()).post {
+            currentAssembly = current
+            title_current.text = currentAssembly.name
+            date_current.text = currentAssembly.date
+
+            LoyolaApplication.getInstance()?.user?.let {
+                if (it.state_activation == User.STATE_USER_ACTIVE) {
+                    icon_state.setImageDrawable(activity?.getDrawable(R.drawable.icon_status_user_active))
+                    state_user.text = getString(R.string.text_active_state)
+                } else {
+                    icon_state.setImageDrawable(activity?.getDrawable(R.drawable.icon_status_user_inactive))
+                    state_user.text = getString(R.string.text_inactive_account)
+                }
+            }
+            card_current.visibility = CardView.VISIBLE
+        }
+    }
+
 
     fun populateAssemblyList(assemblys: List<Assembly>){
 
@@ -128,7 +183,7 @@ class ListAssemblyFragment : Fragment() {
         }*/
             recycler.setAdapter(recycler_adap)
 
-            loader.visibility = ProgressBar.INVISIBLE
+            noAssamblys.visibility = TextView.INVISIBLE
         }
     }
 

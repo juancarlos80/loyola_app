@@ -79,4 +79,7 @@ class LoyolaRepository(
     suspend fun deleteAllAssemblys(){
         assemblyDao.deleteAll()
     }
-}
+
+    fun getAllAssemblysStatus(status: String): List<Assembly> {
+        return assemblyDao.getAllAssemblysStatus(status)
+    }}
