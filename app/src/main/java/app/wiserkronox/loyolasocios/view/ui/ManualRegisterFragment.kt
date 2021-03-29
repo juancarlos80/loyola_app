@@ -10,10 +10,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import app.wiserkronox.loyolasocios.R
 import app.wiserkronox.loyolasocios.service.LoyolaApplication
 import app.wiserkronox.loyolasocios.service.model.User
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class ManualRegisterFragment : Fragment() {
@@ -53,39 +53,59 @@ class ManualRegisterFragment : Fragment() {
     }
 
     fun validateRegister(){
-        if( TextUtils.isEmpty( email_1.text) ){
-            Toast.makeText( activity, "El correo electronico no puede estar vacio", Toast.LENGTH_SHORT).show()
+        if( TextUtils.isEmpty(email_1.text) ){
+            Toast.makeText(
+                activity,
+                "El correo electronico no puede estar vacio",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
         if ( !android.util.Patterns.EMAIL_ADDRESS.matcher(email_1.text).matches() ){
-            Toast.makeText( activity, "El correo electrónico no es una direccion válida o contiene caracteres no permitidos", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                activity,
+                "El correo electrónico no es una direccion válida o contiene caracteres no permitidos",
+                Toast.LENGTH_LONG
+            ).show()
             return
         }
 
-        if( TextUtils.isEmpty( password_1.text) ){
-            Toast.makeText( activity, "Debe definir una contraseñara el registro de su cuenta", Toast.LENGTH_SHORT).show()
+        if( TextUtils.isEmpty(password_1.text) ){
+            Toast.makeText(
+                activity,
+                "Debe definir una contraseñara el registro de su cuenta",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
         if( password_1.text.toString().length < 6 ){
-            Toast.makeText( activity, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                activity,
+                "La contraseña debe tener al menos 6 caracteres",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
-        if( TextUtils.isEmpty( password_2.text) ){
-            Toast.makeText( activity, "La confirmacion de la contraseña no puede estar vacia", Toast.LENGTH_SHORT).show()
+        if( TextUtils.isEmpty(password_2.text) ){
+            Toast.makeText(
+                activity,
+                "La confirmacion de la contraseña no puede estar vacia",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
-        if( !password_1.text.toString().equals(  password_2.text.toString() ) ){
-            Toast.makeText( activity, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
+        if( !password_1.text.toString().equals(password_2.text.toString()) ){
+            Toast.makeText(activity, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
             return
         }
 
-        GlobalScope.launch {
+        lifecycleScope.launch {
             (activity as MainActivity).goLoader()
-            val user_reg = LoyolaApplication.getInstance()?.repository?.getUserEmail( email_1.text.toString() )
+            val user_reg = LoyolaApplication.getInstance()?.repository?.getUserEmail(email_1.text.toString())
             if( user_reg != null ){
                 (activity as MainActivity).goFailLogin("El correo electrónico que intenta registrar ya esta en uso")
             } else {
@@ -95,12 +115,12 @@ class ManualRegisterFragment : Fragment() {
                 user.state = User.REGISTER_LOGIN_STATE
 
                 if( activity == null )
-                Log.d("FK", "Ac nula")
+                    Log.d("FK", "Nula que hacer??")
                 else {
                     Log.d("FK", "Nooo Ac nula")
                 }
 
-                (activity as MainActivity).registerManualUser( user )
+                (activity as MainActivity).registerManualUser(user)
             }
         }
     }

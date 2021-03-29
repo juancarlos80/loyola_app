@@ -3,7 +3,6 @@ package app.wiserkronox.loyolasocios.service.model
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
-
 @Dao
 interface UserDao {
     @Query("select * from user order by names")
@@ -17,7 +16,6 @@ interface UserDao {
 
     @Update
     suspend fun update(user: User?)
-
 
     @Query("select * from user where email = :email")
     fun getUserByEmail(email: String): User
@@ -33,4 +31,5 @@ interface UserDao {
 
     @Query("delete from user")
     suspend fun deleteAll()
+
 }

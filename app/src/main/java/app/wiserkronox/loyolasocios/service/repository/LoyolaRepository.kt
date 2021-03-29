@@ -1,11 +1,15 @@
 package app.wiserkronox.loyolasocios.service.repository
 
 import androidx.annotation.WorkerThread
+import app.wiserkronox.loyolasocios.service.model.Assembly
+import app.wiserkronox.loyolasocios.service.model.AssemblyDao
 import app.wiserkronox.loyolasocios.service.model.User
 import app.wiserkronox.loyolasocios.service.model.UserDao
 import kotlinx.coroutines.flow.Flow
 
-class LoyolaRepository( private val userDao: UserDao ) {
+class LoyolaRepository(
+    private val userDao: UserDao,
+    private val assemblyDao: AssemblyDao) {
 
     val allUsers: Flow<List<User>> = userDao.getUsers()
 
@@ -48,5 +52,31 @@ class LoyolaRepository( private val userDao: UserDao ) {
     @WorkerThread
     suspend fun update(user: User){
         userDao.update(user)
+    }
+
+    /*************************************************************************************
+     * Funciones para la instancia de la asamblea
+     */
+    val allAssemblys: Flow<List<Assembly>> = assemblyDao.getAssemblys()
+    fun getAllAssembly(): List<Assembly> {
+        return assemblyDao.getAllAssemblys()
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun insertAssembly(assembly: Assembly): Long {
+        return assemblyDao.insert( assembly )
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun insertAllAssembly(assemblys: List<Assembly>): List<Long>{
+        return assemblyDao.insertAll( assemblys )
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun deleteAllAssemblys(){
+        assemblyDao.deleteAll()
     }
 }

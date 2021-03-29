@@ -11,15 +11,17 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = arrayOf(
-        User::class
+        User::class,
+        Assembly::class
     ),
-    version = 9,
+    version = 10,
     exportSchema = false
 )
 
  abstract class AppRoomDataBase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
+    abstract fun assemblyDao(): AssemblyDao
 
     companion object {
         @Volatile

@@ -111,4 +111,13 @@
     <string name="label_selfie">Autofoto</string>
     <string name="btn_upload_server">Enviar Información</string>
 
+
+    <!-- Textos para las asambleas -->
+    <string name="text_title_assembly_demo">ASAMBLEA EXTRAORDINARIA GESTIÓN 2020</string>
+    <string name="date_demo">19 | Diciembre | 2020</string>
+    <string name="hint_memorys">Memorias</string>
+    <string name="hint_results">Resultados</string>
+
+    <string name="title_assembly_list">Asambleas Pasadas</string>
+
 </resources>
