@@ -66,14 +66,22 @@ class ListAssemblyFragment : Fragment() {
         icon_state = root.findViewById(R.id.icon_user_state )
         state_user = root.findViewById(R.id.text_user_state)
 
+        noAssamblys.visibility = TextView.INVISIBLE
+        card_current.visibility = CardView.GONE
+
         if( (activity as HomeActivity).isOnline() ) {
             getUpdateFromServer()
         } else {
-            loader.visibility = ProgressBar.INVISIBLE
-            noAssamblys.text = "Necesita tener conexion a Internet para ver las asambleas"
-            noAssamblys.visibility = TextView.VISIBLE
+            cant_load_assemblys("Necesita tener conexión a Internet para ver las asambleas")
         }
         return root
+    }
+
+    fun cant_load_assemblys(message:String){
+        loader.visibility = ProgressBar.INVISIBLE
+        noAssamblys.text = message
+        noAssamblys.visibility = TextView.VISIBLE
+        card_current.visibility = CardView.GONE
     }
 
     fun getUpdateFromServer(){
@@ -102,7 +110,7 @@ class ListAssemblyFragment : Fragment() {
                 { error ->
                     Log.e(TAG, error.toString())
                     error.printStackTrace()
-                    (activity as HomeActivity).showMessage("Error de conexión con el servidor")
+                    cant_load_assemblys("Error de conexión con el servidor")
                 }
             )
 

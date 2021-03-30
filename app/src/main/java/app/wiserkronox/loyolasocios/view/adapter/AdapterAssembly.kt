@@ -21,7 +21,7 @@ class AdapterAssembly internal constructor(private val assemblyList: List<Assemb
     override fun onBindViewHolder(holder: AssemblyViewHolder, position: Int) {
         val assembly = assemblyList[position]
         holder.name.text = assembly.name
-        holder.date.text = assembly.name
+        holder.date.text = assembly.date
     }
 
     override fun getItemCount(): Int {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="main_green">#00884a</color>
+    <color name="second_green">#019647</color>
     <color name="font_color_home">#c1cbc4</color>
     <color name="back_grey">#989898</color>
     <color name="back2_grey">#d1d2d4</color>
@@ -10,6 +11,8 @@
     <color name="deep_green">#014727</color>
     <color name="deep_grey">#555555</color>
     <color name="deep_green_trans">#60014727</color>
+    <color name="background_card">#eeeeee</color>
+    <color name="blue_zoom">#2196f3</color>
 
     <style name="edit_login" parent="@style/Widget.AppCompat.EditText">
         <item name="android:textColor">@color/white</item>
@@ -38,6 +41,11 @@
         <item name="android:backgroundTint">@color/orange_2</item>
     </style>
 
+    <style name="button_zoom" >
+        <item name="android:textColor">@color/white</item>
+        <item name="android:backgroundTint">@color/blue_zoom</item>
+    </style>
+
     <style name="button_secundary" >
         <item name="android:textColor">@color/black</item>
         <item name="android:backgroundTint">@color/font_color_home</item>
@@ -47,6 +55,14 @@
         <item name="android:textColor">@color/font_color_home</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">32sp</item>
+    </style>
+
+    <style name="title_dark_card" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/background_card</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">5dp</item>
     </style>
 
     <style name="title_light" parent="@style/Widget.AppCompat.TextView">
