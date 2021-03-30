@@ -33,9 +33,9 @@ class UserViewModel (private val repository: LoyolaRepository) : ViewModel() {
         return repository.getUserEmail2(email)
     }*/
 
-    fun getUserByEmail2( email: String ) = viewModelScope.launch {
+    /*fun getUserByEmail2( email: String ) = viewModelScope.launch {
         repository.getUserEmail2(email).asLiveData()
-    }
+    }*/
 
 }
 

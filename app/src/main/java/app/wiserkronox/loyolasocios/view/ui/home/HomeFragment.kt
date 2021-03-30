@@ -75,7 +75,9 @@ class HomeFragment : Fragment() {
             }
 
             //if( it.state_activation == User.STATE_USER_INACTIVE ){
+            if( (activity as HomeActivity).isOnline() ) {
                 getUserStatusFromServer(it)
+            }
             //}
         }
 

@@ -9,6 +9,7 @@
     <color name="yellow">#f4e01b</color>
     <color name="deep_green">#014727</color>
     <color name="deep_grey">#555555</color>
+    <color name="deep_green_trans">#60014727</color>
 
     <style name="edit_login" parent="@style/Widget.AppCompat.EditText">
         <item name="android:textColor">@color/white</item>
@@ -64,6 +65,13 @@
         <item name="android:textColor">@color/deep_grey</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="hint_camera_text" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">10dp</item>
     </style>
 
     <style name="MySpinnerDatePickerStyle" parent="android:Theme.Material.Dialog">

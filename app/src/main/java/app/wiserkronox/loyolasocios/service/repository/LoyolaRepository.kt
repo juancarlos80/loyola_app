@@ -40,9 +40,13 @@ class LoyolaRepository(
         return userDao.getUserByEmail( email )
     }
 
-    fun getUserEmail2(email: String): Flow<User> {
-        return userDao.getUserByEmail2( email )
+    fun getUserEmailPassword(email: String, password: String): User {
+        return userDao.getUserByEmailPassword( email, password )
     }
+
+    /*fun getUserEmail2(email: String): Flow<User> {
+        return userDao.getUserByEmail2( email )
+    }*/
 
     fun getUserByOauthUid(oauthUid: String): User {
         return userDao.getUserByOauth_uid( oauthUid)

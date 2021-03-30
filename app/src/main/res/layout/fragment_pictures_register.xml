@@ -58,10 +58,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginTop="20dp"
-        android:textColor="@color/font_color_home"
+        android:layout_marginTop="15dp"
         android:text="@string/subtitle_pictures_id"
+        android:textColor="@color/font_color_home"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
@@ -70,7 +69,7 @@
         android:layout_width="100dp"
         android:layout_height="75dp"
         android:layout_marginStart="68dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="10dp"
         android:src="@drawable/ic_menu_camera"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -86,12 +85,12 @@
 
     <Button
         android:id="@+id/btn_upload_picture_1"
+        style="@style/button_secundary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="5dp"
         android:text="@string/btn_upload_picture_1"
-        style="@style/button_secundary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/img_picture_1" />
 
@@ -128,13 +127,13 @@
 
     <ImageView
         android:id="@+id/img_selfie"
-        android:layout_width="138dp"
-        android:layout_height="176dp"
+        android:layout_width="105dp"
+        android:layout_height="141dp"
         android:layout_marginStart="28dp"
         android:layout_marginTop="24dp"
+        android:src="@drawable/ic_menu_camera"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8"
-        android:src="@drawable/ic_menu_camera" />
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <Button
         android:id="@+id/btn_save_picture"
@@ -169,6 +168,24 @@
         style="@style/button_secundary"
         app:layout_constraintStart_toEndOf="@+id/img_selfie"
         app:layout_constraintTop_toTopOf="@+id/img_selfie" />
+
+    <TextView
+        android:id="@+id/text_feedback_p"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center"
+        android:text="@string/text_inactive_account"
+        android:textColor="@android:color/holo_red_light"
+        android:textStyle="bold"
+        android:padding="10dp"
+        android:visibility="invisible"
+        android:background="@drawable/shape_input_white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/img_selfie"
+        app:layout_constraintTop_toBottomOf="@+id/btn_upload_selfie" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

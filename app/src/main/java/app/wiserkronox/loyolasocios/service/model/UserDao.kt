@@ -24,7 +24,7 @@ interface UserDao {
     fun getUserByEmail2(email: String): Flow<User>
 
     @Query("select * from user where email = :email and password = :password")
-    fun getUserByEmailPassword(email: String, password: String): Flow<User>
+    fun getUserByEmailPassword(email: String, password: String): User
 
     @Query("select * from user where oauth_uid = :oauth_uid")
     fun getUserByOauth_uid(oauth_uid: String): User

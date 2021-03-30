@@ -7,10 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import app.wiserkronox.loyolasocios.R
 import app.wiserkronox.loyolasocios.service.model.User
@@ -43,6 +40,7 @@ class PicturesRegisterFragment : Fragment() {
     private lateinit var picture_1: ImageView
     private lateinit var picture_2: ImageView
     private lateinit var selfie: ImageView
+    private lateinit var text_feedback: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,6 +54,7 @@ class PicturesRegisterFragment : Fragment() {
         picture_1 = root.findViewById(R.id.img_picture_1)
         picture_2 = root.findViewById(R.id.img_picture_2)
         selfie = root.findViewById(R.id.img_selfie)
+        text_feedback = root.findViewById(R.id.text_feedback_p)
 
         val btnTakePicture1 = root.findViewById<Button>(R.id.btn_upload_picture_1)
         btnTakePicture1.setOnClickListener {
@@ -105,6 +104,10 @@ class PicturesRegisterFragment : Fragment() {
                 Uri.parse( it.selfie)?.let {
                     selfie.setImageURI( it )
                 }
+            }
+            if( it.feedback_activation != ""){
+                text_feedback.text = it.feedback_activation
+                text_feedback.visibility = TextView.VISIBLE
             }
 
         }

@@ -2,6 +2,8 @@ package app.wiserkronox.loyolasocios.view.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -140,4 +142,9 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    fun isOnline(): Boolean {
+        val connMgr = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo: NetworkInfo? = connMgr.activeNetworkInfo
+        return networkInfo?.isConnected == true
+    }
 }

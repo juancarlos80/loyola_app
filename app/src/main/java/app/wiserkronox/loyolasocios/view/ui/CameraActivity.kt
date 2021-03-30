@@ -40,7 +40,7 @@ class CameraActivity : AppCompatActivity() {
 
     //Textos de la actividad
     private lateinit var text_title: TextView
-    private lateinit var text_subtitle: TextView
+    //private lateinit var text_subtitle: TextView
 
     //Para la activacion de la camara
     private var imageCapture: ImageCapture? = null

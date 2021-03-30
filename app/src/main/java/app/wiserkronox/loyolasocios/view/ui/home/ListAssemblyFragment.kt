@@ -66,7 +66,13 @@ class ListAssemblyFragment : Fragment() {
         icon_state = root.findViewById(R.id.icon_user_state )
         state_user = root.findViewById(R.id.text_user_state)
 
-        getUpdateFromServer()
+        if( (activity as HomeActivity).isOnline() ) {
+            getUpdateFromServer()
+        } else {
+            loader.visibility = ProgressBar.INVISIBLE
+            noAssamblys.text = "Necesita tener conexion a Internet para ver las asambleas"
+            noAssamblys.visibility = TextView.VISIBLE
+        }
         return root
     }
 

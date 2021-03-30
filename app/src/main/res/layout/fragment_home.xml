@@ -41,6 +41,8 @@
         android:textColor="@color/font_color_home"
         android:textSize="25sp"
         android:textStyle="bold"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"

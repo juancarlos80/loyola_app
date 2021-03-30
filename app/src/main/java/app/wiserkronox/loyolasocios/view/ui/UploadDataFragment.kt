@@ -61,13 +61,23 @@ class UploadDataFragment : Fragment() {
             }
 
             btnUpload.setOnClickListener {
-                sendUserData()
+                if( (activity as MainActivity).isOnline() ) {
+                    sendUserData()
+                } else {
+                    (activity as MainActivity).showMessage("Debe estar conectado a Internet para poder enviar sus datos")
+                    btnUpload.visibility = Button.VISIBLE
+                }
             }
         }
 
         btnUpload.visibility = Button.INVISIBLE
 
-        sendUserData()
+        if( (activity as MainActivity).isOnline() ) {
+            sendUserData()
+        } else {
+            (activity as MainActivity).showMessage("Debe estar conectado a Internet para poder enviar sus datos")
+            btnUpload.visibility = Button.VISIBLE
+        }
         return root
     }
 

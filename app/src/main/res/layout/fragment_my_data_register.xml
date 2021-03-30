@@ -5,29 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_datas"
-    tools:context=".view.ui.MyDataRegisterFragment">
+    tools:context=".view.ui.MyDataRegisterFragment"
+    tools:visibility="invisible">
 
     <TextView
         android:id="@+id/textView2"
+        style="@style/title_dark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginTop="16dp"
         android:text="@string/subtitle_my_data"
-        style="@style/title_dark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/edit_names"
+        style="@style/edit_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:ems="10"
+        android:hint="@string/hint_names"
         android:inputType="textPersonName"
         android:text=""
-        android:hint="@string/hint_names"
-        style="@style/edit_login"
         app:layout_constraintStart_toStartOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
@@ -92,24 +93,24 @@
 
     <Button
         android:id="@+id/btn_save"
+        style="@style/button_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/btn_save"
-        style="@style/button_login"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/btn_cancel_data"
+        style="@style/button_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginLeft="40dp"
         android:text="@string/btn_cancel"
-        style="@style/button_login"
         app:layout_constraintBottom_toBottomOf="@+id/btn_save"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -133,5 +134,24 @@
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/spinner_extension"
         app:layout_constraintStart_toStartOf="@+id/spinner_extension" />
+
+    <TextView
+        android:id="@+id/text_feedback"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center"
+        android:text="@string/text_inactive_account"
+        android:textColor="@android:color/holo_red_light"
+        android:textStyle="bold"
+        android:padding="10dp"
+        android:background="@drawable/shape_input_white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@+id/edit_phone_number" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

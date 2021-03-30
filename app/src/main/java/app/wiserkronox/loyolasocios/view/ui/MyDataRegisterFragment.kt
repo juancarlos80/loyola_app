@@ -26,6 +26,7 @@ class MyDataRegisterFragment : Fragment() {
     //private lateinit var email_1: EditText
     private lateinit var birthday: TextView
     private lateinit var phone_number: EditText
+    private lateinit var text_feedback: TextView
 
     private val CURRENT_USER_KEY = "current_user_key"
     private var cUser: User? = null
@@ -64,6 +65,7 @@ class MyDataRegisterFragment : Fragment() {
         extension = root.findViewById(R.id.spinner_extension)
         birthday = root.findViewById(R.id.text_birthdate)
         phone_number = root.findViewById(R.id.edit_phone_number)
+        text_feedback = root.findViewById(R.id.text_feedback)
 
         birthday.setOnClickListener {
             val lDate = birthday.text.split("/")
@@ -105,6 +107,11 @@ class MyDataRegisterFragment : Fragment() {
                 birthday.text = it.birthdate
             }
             phone_number.setText(it.phone_number)
+
+            if( it.feedback_activation != ""){
+                text_feedback.text = it.feedback_activation
+                text_feedback.visibility = TextView.VISIBLE
+            }
         }
 
         val btnSave = root.findViewById<Button>(R.id.btn_save)

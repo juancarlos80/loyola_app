@@ -254,9 +254,9 @@ class MainActivity : AppCompatActivity() {
     fun getUserByEmailPassword(email: String, password: String){
         goLoader()
         GlobalScope.launch {
-            val user = LoyolaApplication.getInstance()?.repository?.getUserEmail(email)
+            val user = LoyolaApplication.getInstance()?.repository?.getUserEmailPassword(email, password)
             if( user != null ) {
-                Log.d(MainActivity.TAG, "user" + user.password)
+                //Log.d(MainActivity.TAG, "user" + user.password)
                 saveManualUserLogin(user.email, user.password)
                 defineDestination(user)
             } else {
