@@ -46,8 +46,8 @@
                 android:layout_height="108dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="40dp"
-                android:gravity="center"
                 android:background="@drawable/shape_input_white"
+                android:gravity="center"
                 android:text="@string/text_title_assembly_demo"
                 android:textColor="@color/deep_green"
                 android:textSize="18sp"
@@ -133,7 +133,7 @@
                 app:layout_constraintTop_toTopOf="@+id/icon_user_state" />
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/btn_zoom"
                 style="@style/button_zoom"
                 android:layout_width="161dp"
                 android:layout_height="66dp"

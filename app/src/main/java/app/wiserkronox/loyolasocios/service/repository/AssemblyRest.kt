@@ -2,6 +2,9 @@ package app.wiserkronox.loyolasocios.service.repository
 
 import android.content.Context
 import app.wiserkronox.loyolasocios.R
+import app.wiserkronox.loyolasocios.service.model.Assembly
+import org.json.JSONArray
+import org.json.JSONException
 
 class AssemblyRest (val context: Context){
     companion object{
@@ -12,6 +15,33 @@ class AssemblyRest (val context: Context){
         return context.getString(R.string.host_service)+
                 context.getString(R.string.home_service)+
                 GET_ASSEMBLYS
+    }
+
+    fun getAssemblysList(jAssemblys: JSONArray): List<Assembly>{
+        var listAssembly : ArrayList<Assembly> = arrayListOf()
+        try{
+            for ( i in 0..jAssemblys.length()-1 ){
+                val j_assembly = jAssemblys.getJSONObject(i)
+                var assembly = Assembly()
+                assembly.id = j_assembly.getLong("id")
+                assembly.name = j_assembly.getString("name")
+                assembly.date = j_assembly.getString("datetime")
+                assembly.journey = j_assembly.getString("journey")
+                assembly.memory = j_assembly.getString("memory")
+                assembly.status = j_assembly.getString("status")
+                assembly.zoom_code = j_assembly.getString("zoom_code")
+                assembly.zoom_password = j_assembly.getString("zoom_password")
+                assembly.created_at = j_assembly.getString("created_at")
+                assembly.updated_at = j_assembly.getString("updated_at")
+
+                listAssembly.add(assembly)
+            }
+            return listAssembly
+
+        } catch (j_error: JSONException){
+            j_error.printStackTrace()
+            return listAssembly
+        }
     }
 
     /*

@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -26,8 +27,6 @@ import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONException
 
 
 class ListAssemblyFragment : Fragment() {
@@ -41,9 +40,9 @@ class ListAssemblyFragment : Fragment() {
     private  lateinit var icon_state: ImageView
     private  lateinit var state_user: TextView
     private  lateinit var card_current: CardView
+    private  lateinit var btn_zoom: Button
 
     private  lateinit var currentAssembly: Assembly
-
 
     companion object {
         private const val TAG = "HomeFragment"
@@ -65,9 +64,24 @@ class ListAssemblyFragment : Fragment() {
         date_current = root.findViewById(R.id.text_date_current)
         icon_state = root.findViewById(R.id.icon_user_state )
         state_user = root.findViewById(R.id.text_user_state)
+        btn_zoom = root.findViewById(R.id.btn_zoom)
 
         noAssamblys.visibility = TextView.INVISIBLE
         card_current.visibility = CardView.GONE
+
+        LoyolaApplication.getInstance()?.user?.let {user ->
+            btn_zoom.setOnClickListener{
+                if( user.state_activation == User.STATE_USER_ACTIVE ){
+                    (activity as HomeActivity).joinMeeting(
+                        currentAssembly.zoom_code,
+                        currentAssembly.zoom_password,
+                        user.names+" "+user.last_name_1+" "+user.last_name_2)
+                } else {
+                    (activity as HomeActivity).showMessage("Solo socios con cuenta activa pueden ingresar a la asamblea")
+                }
+            }
+        }
+
 
         if( (activity as HomeActivity).isOnline() ) {
             getUpdateFromServer()
@@ -98,7 +112,8 @@ class ListAssemblyFragment : Fragment() {
                         if (response.has("assemblys")) {
                             val assemblys = response.getJSONArray("assemblys")
                             if (assemblys.length() > 0) {
-                                updateAssemblys(assemblys)
+                                val assemblyRest = AssemblyRest(it)
+                                insertAssemblys( assemblyRest.getAssemblysList( assemblys) )
                             } else {
                                 noAssamblys.visibility = TextView.VISIBLE
                             }
@@ -119,7 +134,7 @@ class ListAssemblyFragment : Fragment() {
         }
     }
 
-    fun updateAssemblys(jAssemblys: JSONArray){
+    /*fun updateAssemblys(jAssemblys: JSONArray){
         try{
             var listAssembly : ArrayList<Assembly> = arrayListOf()
             for ( i in 0..jAssemblys.length()-1 ){
@@ -131,6 +146,8 @@ class ListAssemblyFragment : Fragment() {
                 assembly.journey = j_assembly.getString("journey")
                 assembly.memory = j_assembly.getString("memory")
                 assembly.status = j_assembly.getString("status")
+                assembly.zoom_code = j_assembly.getString("zoom_code")
+                assembly.zoom_password = j_assembly.getString("zoom_password")
                 assembly.created_at = j_assembly.getString("created_at")
                 assembly.updated_at = j_assembly.getString("updated_at")
 
@@ -141,7 +158,7 @@ class ListAssemblyFragment : Fragment() {
         } catch (j_error: JSONException){
             j_error.printStackTrace()
         }
-    }
+    }*/
 
     fun insertAssemblys(assemblys: List<Assembly>){
         GlobalScope.launch {
@@ -156,8 +173,8 @@ class ListAssemblyFragment : Fragment() {
             }
 
             actives?.let {
-                if( it.size >= 1 ){
-                    populateCurrentAssembly(it.get(0))
+                if(it.isNotEmpty()){
+                    populateCurrentAssembly(it[0])
                 }
             }
 
@@ -165,13 +182,15 @@ class ListAssemblyFragment : Fragment() {
     }
 
     fun populateCurrentAssembly(current: Assembly){
+        currentAssembly = current
+
         Handler(Looper.getMainLooper()).post {
-            currentAssembly = current
+
             title_current.text = currentAssembly.name
             date_current.text = currentAssembly.date
 
-            LoyolaApplication.getInstance()?.user?.let {
-                if (it.state_activation == User.STATE_USER_ACTIVE) {
+            LoyolaApplication.getInstance()?.user?.let { user ->
+                if (user.state_activation == User.STATE_USER_ACTIVE) {
                     icon_state.setImageDrawable(activity?.getDrawable(R.drawable.icon_status_user_active))
                     state_user.text = getString(R.string.text_active_state)
                 } else {
@@ -179,6 +198,7 @@ class ListAssemblyFragment : Fragment() {
                     state_user.text = getString(R.string.text_inactive_account)
                 }
             }
+
             card_current.visibility = CardView.VISIBLE
         }
     }

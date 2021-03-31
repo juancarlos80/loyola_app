@@ -103,7 +103,7 @@ class ManualRegisterFragment : Fragment() {
             return
         }
 
-        (activity as MainActivity).goLoader()
+        //(activity as MainActivity).goLoader()
         GlobalScope.launch {
             val user_reg = LoyolaApplication.getInstance()?.repository?.getUserEmail(email_1.text.toString())
             if( user_reg != null ){

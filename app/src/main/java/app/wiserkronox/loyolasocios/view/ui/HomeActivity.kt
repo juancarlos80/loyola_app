@@ -26,6 +26,7 @@ import app.wiserkronox.loyolasocios.service.model.User
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import us.zoom.sdk.*
 
 class HomeActivity : AppCompatActivity() {
 
@@ -56,7 +57,7 @@ class HomeActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        intent.getStringExtra("user_email")?.let { Log.d("HOME", it) }
+        initializeSdk(this)
 
     }
 
@@ -146,5 +147,49 @@ class HomeActivity : AppCompatActivity() {
         val connMgr = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo: NetworkInfo? = connMgr.activeNetworkInfo
         return networkInfo?.isConnected == true
+    }
+
+    /**********************************************************************************************
+     * Integracion con Zoom
+     */
+
+    fun initializeSdk(context: Context?) {
+        val sdk = ZoomSDK.getInstance()
+
+        val params = ZoomSDKInitParams()
+        params.appKey = getString(R.string.zoom_app_key)
+        params.appSecret = getString(R.string.zoom_app_secret)
+        params.domain = "zoom.us"
+        params.enableLog = true
+
+        val listener: ZoomSDKInitializeListener = object : ZoomSDKInitializeListener {
+            /**
+             * @param errorCode [us.zoom.sdk.ZoomError.ZOOM_ERROR_SUCCESS] if the SDK has been initialized successfully.
+             */
+            override fun onZoomSDKInitializeResult(errorCode: Int, internalErrorCode: Int) {
+                if( errorCode == ZoomError.ZOOM_ERROR_SUCCESS ){
+                    Log.d(TAG, "Init Zoom Success");
+                } else {
+                    Log.d(
+                        TAG,
+                        "No se pudo inicializar el SDK de zoom, errorCode: $errorCode, Internal Error Code $internalErrorCode"
+                    )
+                }
+            }
+            override fun onZoomAuthIdentityExpired() {
+                Log.d(TAG,"Autentificacion expiro")
+            }
+        }
+        sdk.initialize(context, listener, params)
+    }
+
+    fun joinMeeting(zoom_code: String, zomm_password: String, userName: String) {
+        val meetingService = ZoomSDK.getInstance().meetingService
+        val options = JoinMeetingOptions()
+        val params = JoinMeetingParams()
+        params.displayName = userName
+        params.meetingNo = zoom_code
+        params.password = zomm_password
+        meetingService.joinMeetingWithParams(this, params, options)
     }
 }
