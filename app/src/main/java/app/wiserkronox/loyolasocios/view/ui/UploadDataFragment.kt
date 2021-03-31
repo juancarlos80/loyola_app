@@ -28,6 +28,7 @@ class UploadDataFragment : Fragment() {
     private lateinit var icon_selfie: ImageView
 
     private lateinit var btnUpload: Button
+    private lateinit var btnCancel: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +53,11 @@ class UploadDataFragment : Fragment() {
         icon_selfie = root.findViewById(R.id.icon_selfie)
 
         btnUpload = root.findViewById(R.id.btn_upload_server)
+        btnCancel = root.findViewById(R.id.btn_cancel_upload)
+
+        btnCancel.setOnClickListener{
+            (activity as MainActivity).cancelRequests()
+        }
 
         //Validamos que esten todos los datos
         cUser?.let {
@@ -93,27 +99,29 @@ class UploadDataFragment : Fragment() {
     }
 
     fun sendUserImages(user: User){
-        var typeAuth = "email"
-        var valueAuth = user.email
-        if (user.oauth_uid != "") {
-            typeAuth = "oauth_uid"
-            valueAuth = user.oauth_uid
-        }
+        if( activity != null ) {
+            var typeAuth = "email"
+            var valueAuth = user.email
+            if (user.oauth_uid != "") {
+                typeAuth = "oauth_uid"
+                valueAuth = user.oauth_uid
+            }
 
-        if( !user.picture_1_online ){
-            progress_picture_1.isIndeterminate = true
-            (activity as MainActivity).uploadUriServer(UPLOAD_TYPE_PICTURE_1, user.picture_1, typeAuth, valueAuth, user)
-        } else if ( !user.picture_2_online) {
-            progress_picture_2.isIndeterminate = true
-            (activity as MainActivity).uploadUriServer(UPLOAD_TYPE_PICTURE_2, user.picture_2, typeAuth, valueAuth, user)
-        } else if ( !user.selfie_online) {
-            progress_selfie.isIndeterminate = true
-            (activity as MainActivity).uploadUriServer(UPLOAD_TYPE_SELFIE, user.selfie, typeAuth, valueAuth, user)
-        } else {
-            user.state = User.COMPLETE_STATE
-            user.state_activation = User.STATE_USER_INACTIVE
-            (activity as MainActivity).backUpdate( user )
-            (activity as MainActivity).goThanks()
+            if (!user.picture_1_online) {
+                progress_picture_1.isIndeterminate = true
+                (activity as MainActivity).uploadUriServer(UPLOAD_TYPE_PICTURE_1, user.picture_1, typeAuth, valueAuth, user)
+            } else if (!user.picture_2_online) {
+                progress_picture_2.isIndeterminate = true
+                (activity as MainActivity).uploadUriServer(UPLOAD_TYPE_PICTURE_2, user.picture_2, typeAuth, valueAuth, user)
+            } else if (!user.selfie_online) {
+                progress_selfie.isIndeterminate = true
+                (activity as MainActivity).uploadUriServer(UPLOAD_TYPE_SELFIE, user.selfie, typeAuth, valueAuth, user)
+            } else {
+                user.state = User.COMPLETE_STATE
+                user.state_activation = User.STATE_USER_INACTIVE
+                (activity as MainActivity).backUpdate(user)
+                (activity as MainActivity).goThanks()
+            }
         }
     }
 

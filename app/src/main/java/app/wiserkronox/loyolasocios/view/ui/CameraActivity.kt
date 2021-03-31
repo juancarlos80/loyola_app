@@ -8,6 +8,7 @@ import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.util.Size
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -149,11 +150,11 @@ class CameraActivity : AppCompatActivity() {
 
             override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                 val savedUri = Uri.fromFile(photoFile)
-                Log.d(CameraActivity.TAG, "url: " + savedUri.path)
+                //Log.d(CameraActivity.TAG, "url: " + savedUri.path)
 
                 val exif = Exif.createFromFile(photoFile)
                 val rotation = exif.rotation
-                Log.d(TAG, "rotacion: " + rotation)
+                //Log.d(TAG, "rotacion: " + rotation)
                 if( rotation > 0 ){
                     rotateImageFile(photoFile.path, rotation)
                 }
@@ -202,6 +203,7 @@ class CameraActivity : AppCompatActivity() {
                     }
 
             imageCapture = ImageCapture.Builder()
+                    .setMaxResolution(Size(480, 640))
                     .build()
 
             // Select back camera as a default

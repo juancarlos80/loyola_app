@@ -26,6 +26,7 @@ import app.wiserkronox.loyolasocios.service.repository.VolleyMultipartRequest
 import app.wiserkronox.loyolasocios.viewmodel.UserViewModel
 import app.wiserkronox.loyolasocios.viewmodel.UserViewModelFactory
 import com.android.volley.Request
+import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     private var google_request = false
 
     private var updateDataUser = false
+    lateinit var requestUpload: RequestQueue
 
     companion object {
         private const val TAG = "MainActivity"
@@ -501,6 +503,8 @@ class MainActivity : AppCompatActivity() {
                     Log.e(TAG, error.toString())
                     error.printStackTrace()
                     showMessage("Error de conexión con el servidor")
+                    showMessage(userRest.getUserDataURL())
+                    showMessage("err: "+error.message)
                     uploadDataFragment.terminateProgress("data", false)
                 }
         )
@@ -572,7 +576,8 @@ class MainActivity : AppCompatActivity() {
                 return params
             }
         }
-        Volley.newRequestQueue(this).add(request)
+        requestUpload = Volley.newRequestQueue(this)
+        requestUpload.add(request)
     }
 
     //@Throws(IOException::class)
@@ -584,6 +589,14 @@ class MainActivity : AppCompatActivity() {
         inputStream?.buffered()?.use {
             uploadImageServer(type_photo, photo.name, it.readBytes(), type_auth, value_auth, user)
         }
+    }
+
+    fun cancelRequests(){
+        if(!this::requestUpload.isInitialized ) {
+            requestUpload.cancelAll(this)
+        }
+        removeDataUser()
+        goWithoutSession()
     }
 
 }
