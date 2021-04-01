@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
         User::class,
         Assembly::class
     ),
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 

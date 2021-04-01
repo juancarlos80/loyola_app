@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -22,6 +24,7 @@ import app.wiserkronox.loyolasocios.service.model.User
 import app.wiserkronox.loyolasocios.service.repository.AssemblyRest
 import app.wiserkronox.loyolasocios.service.repository.LoyolaService
 import app.wiserkronox.loyolasocios.view.adapter.AdapterAssembly
+import app.wiserkronox.loyolasocios.view.callback.ListAssemblyCallback
 import app.wiserkronox.loyolasocios.view.ui.HomeActivity
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
@@ -29,7 +32,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class ListAssemblyFragment : Fragment() {
+class ListAssemblyFragment : Fragment(), ListAssemblyCallback {
 
     private  lateinit var loader: ProgressBar
     private  lateinit var recycler: RecyclerView
@@ -40,7 +43,13 @@ class ListAssemblyFragment : Fragment() {
     private  lateinit var icon_state: ImageView
     private  lateinit var state_user: TextView
     private  lateinit var card_current: CardView
+    private  lateinit var card_journey: CardView
     private  lateinit var btn_zoom: Button
+    private  lateinit var image_journey: ImageView
+    private  lateinit var image_memorys: ImageView
+    private  lateinit var text_title_attach: TextView
+    private  lateinit var webview_journey: WebView
+    private  lateinit var loader_webview: ProgressBar
 
     private  lateinit var currentAssembly: Assembly
 
@@ -59,6 +68,13 @@ class ListAssemblyFragment : Fragment() {
         recycler = root.findViewById(R.id.recyclerAssembly)
         noAssamblys = root.findViewById(R.id.text_no_assemblys)
         card_current = root.findViewById(R.id.card_current)
+        card_journey = root.findViewById(R.id.card_journey)
+        image_journey = root.findViewById(R.id.image_journey)
+        text_title_attach = root.findViewById(R.id.text_title_attach)
+        webview_journey = root.findViewById(R.id.webview_journey)
+        loader_webview = root.findViewById(R.id.progress_webview)
+
+        image_memorys = root.findViewById(R.id.image_memorys)
 
         title_current = root.findViewById(R.id.text_title_current)
         date_current = root.findViewById(R.id.text_date_current)
@@ -82,6 +98,29 @@ class ListAssemblyFragment : Fragment() {
             }
         }
 
+        webview_journey.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                loader_webview.visibility = ProgressBar.GONE
+                webview_journey.visibility = WebView.VISIBLE
+            }
+        }
+
+        text_title_attach.setOnClickListener {
+            recycler.visibility = RecyclerView.VISIBLE
+            card_journey.visibility = CardView.GONE
+        }
+
+        image_journey.setOnClickListener {
+            recycler.visibility = RecyclerView.GONE
+            text_title_attach.text = "Orden del día"
+            webview_journey.loadData(currentAssembly.journey, "text/html; charset=utf-8", "UTF-8");
+            card_journey.visibility = CardView.VISIBLE
+        }
+
+        image_memorys.setOnClickListener {
+            openMemorys(currentAssembly)
+        }
+
 
         if( (activity as HomeActivity).isOnline() ) {
             getUpdateFromServer()
@@ -96,6 +135,35 @@ class ListAssemblyFragment : Fragment() {
         noAssamblys.text = message
         noAssamblys.visibility = TextView.VISIBLE
         card_current.visibility = CardView.GONE
+    }
+
+    override fun openMemorys( assembly: Assembly ){
+        if( assembly.memory == ""){
+            (activity as HomeActivity).showMessage("Aún no se definieron las memorias")
+        } else {
+            recycler.visibility = RecyclerView.GONE
+            text_title_attach.text = "Memorias"
+            //webview_journey.webViewClient = WebViewClient()
+            webview_journey.settings.setSupportZoom(true)
+            webview_journey.settings.javaScriptEnabled = true
+
+            webview_journey.loadUrl("https://docs.google.com/gview?embedded=true&url=" + assembly.memory)
+            card_journey.visibility = CardView.VISIBLE
+        }
+    }
+
+    override fun openStatements(assembly: Assembly){
+        if( assembly.statements == ""){
+            (activity as HomeActivity).showMessage("Aún no se compartieron los estados")
+        } else {
+            recycler.visibility = RecyclerView.GONE
+            text_title_attach.text = "Estado de resultados"
+            webview_journey.settings.setSupportZoom(true)
+            webview_journey.settings.javaScriptEnabled = true
+
+            webview_journey.loadUrl("https://docs.google.com/gview?embedded=true&url=" + assembly.statements)
+            card_journey.visibility = CardView.VISIBLE
+        }
     }
 
     fun getUpdateFromServer(){
@@ -134,31 +202,6 @@ class ListAssemblyFragment : Fragment() {
         }
     }
 
-    /*fun updateAssemblys(jAssemblys: JSONArray){
-        try{
-            var listAssembly : ArrayList<Assembly> = arrayListOf()
-            for ( i in 0..jAssemblys.length()-1 ){
-                val j_assembly = jAssemblys.getJSONObject(i)
-                var assembly = Assembly()
-                assembly.id = j_assembly.getLong("id")
-                assembly.name = j_assembly.getString("name")
-                assembly.date = j_assembly.getString("datetime")
-                assembly.journey = j_assembly.getString("journey")
-                assembly.memory = j_assembly.getString("memory")
-                assembly.status = j_assembly.getString("status")
-                assembly.zoom_code = j_assembly.getString("zoom_code")
-                assembly.zoom_password = j_assembly.getString("zoom_password")
-                assembly.created_at = j_assembly.getString("created_at")
-                assembly.updated_at = j_assembly.getString("updated_at")
-
-                listAssembly.add(assembly)
-            }
-            insertAssemblys(listAssembly)
-
-        } catch (j_error: JSONException){
-            j_error.printStackTrace()
-        }
-    }*/
 
     fun insertAssemblys(assemblys: List<Assembly>){
         GlobalScope.launch {
@@ -207,7 +250,7 @@ class ListAssemblyFragment : Fragment() {
     fun populateAssemblyList(assemblys: List<Assembly>){
 
         Handler(Looper.getMainLooper()).post {
-            val recycler_adap = AdapterAssembly(assemblys)
+            val recycler_adap = AdapterAssembly(assemblys, this)
             val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(activity)
             recycler.setLayoutManager(layoutManager)
             /*recycler_adap.setOnItemClickListener {

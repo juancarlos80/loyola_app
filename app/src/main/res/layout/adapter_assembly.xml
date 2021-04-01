@@ -46,7 +46,7 @@
             cardView:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView4"
+            android:id="@+id/image_memorys_l"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
@@ -57,13 +57,13 @@
             cardView:srcCompat="@drawable/ic_memorys" />
 
         <ImageView
-            android:id="@+id/imageView5"
+            android:id="@+id/image_statements_l"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="5dp"
             android:contentDescription="@string/hint_results"
-            cardView:layout_constraintStart_toEndOf="@+id/imageView4"
+            cardView:layout_constraintStart_toEndOf="@+id/image_memorys_l"
             cardView:layout_constraintTop_toBottomOf="@+id/text_date"
             cardView:srcCompat="@drawable/ic_results" />
 
@@ -73,9 +73,9 @@
             android:layout_height="wrap_content"
             android:text="@string/hint_memorys"
             android:textColor="@color/second_green"
-            cardView:layout_constraintEnd_toEndOf="@+id/imageView4"
-            cardView:layout_constraintStart_toStartOf="@+id/imageView4"
-            cardView:layout_constraintTop_toBottomOf="@+id/imageView4" />
+            cardView:layout_constraintEnd_toEndOf="@+id/image_memorys_l"
+            cardView:layout_constraintStart_toStartOf="@+id/image_memorys_l"
+            cardView:layout_constraintTop_toBottomOf="@+id/image_memorys_l" />
 
         <TextView
             android:id="@+id/textView33"
@@ -83,9 +83,9 @@
             android:layout_height="wrap_content"
             android:text="@string/hint_results"
             android:textColor="@color/second_green"
-            cardView:layout_constraintEnd_toEndOf="@+id/imageView5"
-            cardView:layout_constraintStart_toStartOf="@+id/imageView5"
-            cardView:layout_constraintTop_toBottomOf="@+id/imageView5" />
+            cardView:layout_constraintEnd_toEndOf="@+id/image_statements_l"
+            cardView:layout_constraintStart_toStartOf="@+id/image_statements_l"
+            cardView:layout_constraintTop_toBottomOf="@+id/image_statements_l" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

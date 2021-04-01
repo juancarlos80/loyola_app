@@ -18,6 +18,8 @@ class Assembly () {
     var journey: String = ""
     @ColumnInfo
     var memory: String = ""
+    @ColumnInfo
+    var statements: String = ""
 
     @ColumnInfo
     var zoom_url: String = ""

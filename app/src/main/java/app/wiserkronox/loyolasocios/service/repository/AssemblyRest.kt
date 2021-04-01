@@ -27,7 +27,12 @@ class AssemblyRest (val context: Context){
                 assembly.name = j_assembly.getString("name")
                 assembly.date = j_assembly.getString("datetime")
                 assembly.journey = j_assembly.getString("journey")
-                assembly.memory = j_assembly.getString("memory")
+                if( j_assembly.getString("memory").length > 10 ) {
+                    assembly.memory = context.getString(R.string.host_service) + j_assembly.getString("memory").substring(2)
+                }
+                if( j_assembly.getString("statemts").length > 10 ) {
+                    assembly.statements = context.getString(R.string.host_service) + j_assembly.getString("statemts").substring(2)
+                }
                 assembly.status = j_assembly.getString("status")
                 assembly.zoom_code = j_assembly.getString("zoom_code")
                 assembly.zoom_password = j_assembly.getString("zoom_password")
