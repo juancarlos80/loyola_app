@@ -45,6 +45,11 @@ class WithoutSessionFragment : Fragment() {
         btnLogin.setOnClickListener{
             validateLogin(it)
         }
+
+        val btnRecovery = root.findViewById<TextView>(R.id.text_password_recovery)
+        btnRecovery.setOnClickListener{
+            (activity as MainActivity).goPasswordRecovery()
+        }
         return root
     }
 

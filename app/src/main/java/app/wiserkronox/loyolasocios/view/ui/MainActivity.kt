@@ -28,6 +28,7 @@ import app.wiserkronox.loyolasocios.service.repository.UserRest
 import app.wiserkronox.loyolasocios.service.repository.VolleyMultipartRequest
 import app.wiserkronox.loyolasocios.viewmodel.UserViewModel
 import app.wiserkronox.loyolasocios.viewmodel.UserViewModelFactory
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
@@ -177,9 +178,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleSingInResult(completedTask: Task<GoogleSignInAccount>){
         try {
-            val account = completedTask.getResult(
-                    ApiException::class.java
-            )
+            val account = completedTask.getResult( ApiException::class.java)
 
             if( account != null ){
                 verifyGoogleAccount(account)
@@ -194,11 +193,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun verifyGoogleAccount(account: GoogleSignInAccount){
-        saveOauthlUserLogin(account?.id ?: "")
+        saveOauthlUserLogin(account.id ?: "")
         GlobalScope.launch {
-            var user_local = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid(account?.id
-                    ?: "")
+            var user_local = LoyolaApplication.getInstance()?.repository?.
+                getUserByOauthUid(account.id ?: "")
             if( user_local == null ){
+                //Aqui buscar en la red si el usuario ya esta en el servidor
+                //getUserFromServer("", "", account.id ?:"")
                 val user = User()
                 user.oauth_provider = "google"
                 user.oauth_uid = account.id ?:""
@@ -329,6 +330,13 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             replace<WithoutSessionFragment>(R.id.fragment_container_view)
+        }
+    }
+
+    fun goPasswordRecovery( ){
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace<PasswordRecoveryFragment>(R.id.fragment_container_view)
         }
     }
 
@@ -702,6 +710,41 @@ class MainActivity : AppCompatActivity() {
         )
 
         LoyolaService.getInstance(this).addToRequestQueue(imageRequest)
+    }
+
+
+    fun postPasswordRecovery(email: String){
+        val userRest = UserRest(this)
+        Log.d(TAG, "Enviar correo de recuperacion"+userRest.postRecoveryPassword())
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.POST, userRest.postRecoveryPassword(),
+            userRest.getUserEmailJson( email ),
+            { response ->
+                Log.d(TAG, "Response is: $response")
+                if (response.getBoolean("success")) {
+                    Log.d(TAG, "Exito")
+                    showMessage("El mensaje se envio correctamente, sigua las instruccion de su correo para restaurar su clave")
+                } else {
+                    showMessage("Error: "+response.getString("reason"))
+                    goWithoutSession()
+                }
+            },
+            { error ->
+                Log.e(TAG, error.toString())
+                Log.e(TAG, userRest.postRecoveryPassword())
+                Log.e(TAG, error.message.toString())
+                error.printStackTrace()
+                showMessage("Error de conexión con el servidor")
+            }
+        )
+        jsonObjectRequest.setRetryPolicy( DefaultRetryPolicy(
+                15000,
+            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Add the request to the RequestQueue.
+        LoyolaService.getInstance(this).addToRequestQueue(jsonObjectRequest)
+
     }
 
 }

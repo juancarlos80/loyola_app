@@ -15,6 +15,12 @@
     <string name="text_footer">Esta entidad esta supervisada por: </string>
     <string name="content_logo_footer">Logotipo ASFI</string>
     <string name="content_logo_loyola">Logotipo Cooperativa Loyola</string>
+    <string name="text_recovery_password">Recuperar contraseña</string>
+
+    <!-- Textos del fragmento Recuperar contraseña -->
+    <string name="btn_recovery">Recuperar</string>
+    <string name="btn_back">Volver</string>
+    <string name="text_email_recovery">Si ya estas registrado ingresa tu correo electrónico</string>
 
     <!-- Textos del fragmento de registro manual -->
     <string name="text_register_title">Registro de Socios</string>

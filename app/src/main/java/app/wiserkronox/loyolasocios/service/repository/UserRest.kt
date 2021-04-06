@@ -12,6 +12,7 @@ class UserRest (val context: Context){
         var SET_USER_PICTURE = "upload_user_picture.php"
         var GET_USER_STATUS = "get_user_status.php"
         var GET_USER_LOGIN = "get_user_login.php"
+        var SEND_MAIL_RECOVERY = "send_mail_recovery.php"
     }
 
     fun getUserDataURL(): String {
@@ -36,6 +37,12 @@ class UserRest (val context: Context){
         return context.getString(R.string.host_service)+
                 context.getString(R.string.home_service)+
                 GET_USER_LOGIN
+    }
+
+    fun postRecoveryPassword(): String {
+        return context.getString(R.string.host_service)+
+                context.getString(R.string.home_service)+
+                SEND_MAIL_RECOVERY
     }
 
     fun getUserDataJson(user: User, upDate: Boolean): JSONObject? {
@@ -240,6 +247,18 @@ class UserRest (val context: Context){
             user_l.state_activation = user_s.state_activation
         }
         return user_l
+    }
+
+    fun getUserEmailJson(email: String): JSONObject? {
+        val jsonBody = JSONObject()
+        return try {
+            jsonBody.put("email", email)
+
+            jsonBody
+        } catch (e: JSONException) {
+            e.printStackTrace()
+            null
+        }
     }
 
 }
