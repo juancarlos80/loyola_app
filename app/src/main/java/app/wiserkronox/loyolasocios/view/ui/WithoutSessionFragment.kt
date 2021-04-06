@@ -43,17 +43,12 @@ class WithoutSessionFragment : Fragment() {
 
         val btnLogin = root.findViewById<Button>(R.id.btn_login)
         btnLogin.setOnClickListener{
-            validarLogin(it)
+            validateLogin(it)
         }
-
-        /*root.findViewById<Button>(R.id.btn_lista).setOnClickListener{
-            (activity as MainActivity).goListUsers()
-        }*/
-
         return root
     }
 
-    fun validarLogin(view : View){
+    private fun validateLogin(view : View){
         if( TextUtils.isEmpty( email.text) ){
             Snackbar.make (view, "Debes ingresar tu direccion de correo para ingresar al sistema", Snackbar.LENGTH_LONG).show()
             return
@@ -66,7 +61,7 @@ class WithoutSessionFragment : Fragment() {
         ( activity as MainActivity).getUserByEmailPassword( email.text.toString(), password.text.toString() )
     }
 
-    protected fun setGoogleButtonText(signInButton: SignInButton, buttonText: String?) {
+    private fun setGoogleButtonText(signInButton: SignInButton, buttonText: String?) {
         for (i in 0 until signInButton.childCount) {
             val v = signInButton.getChildAt(i)
             if (v is TextView) {

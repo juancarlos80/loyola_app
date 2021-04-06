@@ -2,6 +2,7 @@ package app.wiserkronox.loyolasocios.view.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.Uri
@@ -9,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +20,7 @@ import androidx.fragment.app.replace
 import app.wiserkronox.loyolasocios.R
 import app.wiserkronox.loyolasocios.lifecycle.MainObserver
 import app.wiserkronox.loyolasocios.service.LoyolaApplication
+import app.wiserkronox.loyolasocios.service.Util
 import app.wiserkronox.loyolasocios.service.model.User
 import app.wiserkronox.loyolasocios.service.repository.FileDataPart
 import app.wiserkronox.loyolasocios.service.repository.LoyolaService
@@ -28,6 +31,7 @@ import app.wiserkronox.loyolasocios.viewmodel.UserViewModelFactory
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
+import com.android.volley.toolbox.ImageRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -262,8 +266,35 @@ class MainActivity : AppCompatActivity() {
                 saveManualUserLogin(user.email, user.password)
                 defineDestination(user)
             } else {
-                Log.d(MainActivity.TAG, "no hay usuario")
-                goFailLogin("No se encontro el usuario")
+                if( isOnline() ) {
+                    Log.d(MainActivity.TAG, "no hay usuario buscando en el servidor")
+                    getUserFromServer(email, password, "")
+                } else {
+                 showMessage("Si ya esta registrado, debe estar conectado a Internet para buscar su información")
+                }
+            }
+        }
+    }
+
+    fun updateByDataJSON(email: String, oauth_uid: String, userServer: User) {
+        goLoader()
+        GlobalScope.launch {
+            val userLocal: User?
+            if( oauth_uid != "" ) {
+                userLocal = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid(oauth_uid)
+            } else {
+                userLocal = LoyolaApplication.getInstance()?.repository?.getUserByEmail(email)
+            }
+
+            //val userServer = userRest.getUserFromJSON( response.getJSONObject("user"))
+
+            if( userServer == null){
+                showMessage("No se pudo descargar los datos del socio del servidor")
+            } else {
+                if (userLocal == null) {
+                    //Insertar el nuevo usuario del servidor
+                    registerManualUser( userServer )
+                }
             }
         }
     }
@@ -280,6 +311,7 @@ class MainActivity : AppCompatActivity() {
             User.REGISTER_PICTURE_STATE -> goTerms(user)
             User.UPLOAD_DATA_SERVER -> goUploadData(user)
             User.COMPLETE_STATE -> goHome()
+            User.DOWNLOAD_DATA_SERVER -> downloadPictures(user)
             else -> goWithoutSession()
         }
     }
@@ -459,25 +491,40 @@ class MainActivity : AppCompatActivity() {
         return networkInfo?.isConnected == true
     }
 
-    /*fun getUserFromServerByEmailPassord(email: String, password: String){
-        // Instantiate the RequestQueue.
-        val queue = Volley.newRequestQueue(this)
-        val url = "http://www.google.com"
 
-        // Request a string response from the provided URL.
-        val stringRequest = StringRequest(Request.Method.GET, url,
-                Response.Listener<String> { response ->
-                    // Display the first 500 characters of the response string.
-                    Log.d(TAG, "Response is: ${response.substring(0, 500)}")
+    fun getUserFromServer(email: String, password: String, oauth_uid: String){
+        val userRest = UserRest(this)
+        val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.POST, userRest.getUserLoginURL(),
+                userRest.getUserDataLoginJson( email, password, oauth_uid),
+                { response ->
+                    Log.d(TAG, "Response is: $response")
+                    if (response.getBoolean("success")) {
+                        Log.d(TAG, "Exito")
+                        userRest.getUserFromJSON( response.getJSONObject("user"))?.let {
+                            updateByDataJSON(email, oauth_uid, it )
+                        }?: run {
+                            showMessage("No se pudo descargar los datos del socio del servidor")
+                        }
+                    } else {
+                        Log.e(TAG, "No se encontro en la red")
+                        showMessage("No se encontro el usuario")
+                        goWithoutSession()
+                    }
                 },
-                Response.ErrorListener {
-                    Log.d(TAG, "That didn't work!")
-                })
+                { error ->
+                    Log.e(TAG, error.toString())
+                    Log.e(TAG, userRest.getUserLoginURL())
+                    Log.e(TAG, error.message.toString())
+                    error.printStackTrace()
+                    showMessage("Error de conexión con el servidor")
+                }
+        )
 
         // Add the request to the RequestQueue.
-        queue.add(stringRequest)
+        LoyolaService.getInstance(this).addToRequestQueue(jsonObjectRequest)
 
-    }*/
+    }
 
     fun uploadUserDataServer(user: User){
         val userRest = UserRest(this)
@@ -501,10 +548,10 @@ class MainActivity : AppCompatActivity() {
                 },
                 { error ->
                     Log.e(TAG, error.toString())
+                    Log.e(TAG, userRest.getUserDataURL())
+                    Log.e(TAG, error.message.toString())
                     error.printStackTrace()
                     showMessage("Error de conexión con el servidor")
-                    showMessage(userRest.getUserDataURL())
-                    showMessage("err: "+error.message)
                     uploadDataFragment.terminateProgress("data", false)
                 }
         )
@@ -597,6 +644,64 @@ class MainActivity : AppCompatActivity() {
         }
         removeDataUser()
         goWithoutSession()
+    }
+
+
+    fun downloadPictures(user: User){
+        if( user.picture_1.startsWith("http") ){
+            downloadPicture("picture_1", user.picture_1, user)
+            return
+        }
+        if( user.picture_2.startsWith("http") ){
+            downloadPicture("picture_2", user.picture_2, user)
+            return
+        }
+        if( user.selfie.startsWith("http") ){
+            downloadPicture("selfie", user.selfie, user)
+        }
+        user.state = User.COMPLETE_STATE;
+        updateUser( user )
+    }
+
+    fun downloadPicture(type_photo: String, url_picture: String, user: User){
+        val imageRequest = ImageRequest(
+                url_picture,
+                {bitmap -> // response listener
+                    Log.d(TAG, "Descargando Imagen")
+                    Log.d(TAG, "URL: "+url_picture)
+                    Log.d(TAG, "filename: "+url_picture.substring( url_picture.lastIndexOf("/")+1))
+
+                    val photo = Util.saveImage( bitmap, Util.getOutputDirectory(this).toString()+url_picture.substring( url_picture.lastIndexOf("/")+1));
+                    photo?.let{
+                        if( type_photo == "picture_1") {
+                            user.picture_1 = Uri.fromFile(it).toString()
+                            backUpdate( user )
+                            downloadPictures( user )
+                        }
+                        if( type_photo == "picture_2") {
+                            user.picture_2 = Uri.fromFile(it).toString()
+                            backUpdate( user )
+                            downloadPictures( user )
+                        }
+                        if( type_photo == "selfie") {
+                            user.selfie = Uri.fromFile(it).toString()
+                            backUpdate( user )
+                            downloadPictures( user )
+                        }
+                    }
+                },
+                0, // max width
+                0, // max height
+                ImageView.ScaleType.CENTER_CROP, // image scale type
+                Bitmap.Config.ARGB_8888, // decode config
+                {error-> // error listener
+                    Log.d(TAG, error.message.toString())
+                    removeDataUser()
+                    goWithoutSession()
+                }
+        )
+
+        LoyolaService.getInstance(this).addToRequestQueue(imageRequest)
     }
 
 }

@@ -105,7 +105,7 @@ class ManualRegisterFragment : Fragment() {
 
         //(activity as MainActivity).goLoader()
         GlobalScope.launch {
-            val user_reg = LoyolaApplication.getInstance()?.repository?.getUserEmail(email_1.text.toString())
+            val user_reg = LoyolaApplication.getInstance()?.repository?.getUserByEmail(email_1.text.toString())
             if( user_reg != null ){
                 (activity as MainActivity).goFailLogin("El correo electrónico que intenta registrar ya esta en uso")
             } else {

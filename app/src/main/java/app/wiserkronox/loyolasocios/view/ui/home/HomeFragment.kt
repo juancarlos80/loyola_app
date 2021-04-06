@@ -67,18 +67,18 @@ class HomeFragment : Fragment() {
             userIDMember.text = it.id_member
             updateStatusIcon( it )
 
-            val src = MediaStore.Images.Media.getBitmap(activity?.getContentResolver(), Uri.parse(it?.selfie))
-            if( src != null ) {
-                val dr = RoundedBitmapDrawableFactory.create(resources, src)
-                dr.cornerRadius = Math.max(src.width, src.height) / 2.0f
-                userSelfie.setImageDrawable(dr)
+            if( it.selfie.startsWith("file") ) {
+                val src = MediaStore.Images.Media.getBitmap(activity?.getContentResolver(), Uri.parse(it?.selfie))
+                if (src != null) {
+                    val dr = RoundedBitmapDrawableFactory.create(resources, src)
+                    dr.cornerRadius = Math.max(src.width, src.height) / 2.0f
+                    userSelfie.setImageDrawable(dr)
+                }
             }
 
-            //if( it.state_activation == User.STATE_USER_INACTIVE ){
             if( (activity as HomeActivity).isOnline() ) {
                 getUserStatusFromServer(it)
             }
-            //}
         }
 
         return root

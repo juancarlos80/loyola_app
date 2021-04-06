@@ -36,7 +36,7 @@ class LoyolaRepository(
     }
 
 
-    fun getUserEmail(email: String): User {
+    fun getUserByEmail(email: String): User {
         return userDao.getUserByEmail( email )
     }
 

@@ -157,6 +157,9 @@ class CameraActivity : AppCompatActivity() {
                 //Log.d(TAG, "rotacion: " + rotation)
                 if( rotation > 0 ){
                     rotateImageFile(photoFile.path, rotation)
+                } else {
+                    var bitmap = BitmapFactory.decodeFile(photoFile.path)
+                    saveImage( bitmap, photoFile.path)
                 }
                 //val msg = "La foto se guardo: $savedUri"
                 //Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()

@@ -13,6 +13,7 @@ class User () : Serializable {
         var REGISTER_PICTURE_STATE: String = "3"
         var UPLOAD_DATA_SERVER: String = "4"
         var COMPLETE_STATE: String = "5"
+        var DOWNLOAD_DATA_SERVER: String = "6"
 
         var STATE_USER_ACTIVE: Int = 0
         var STATE_USER_INACTIVE: Int = 1
