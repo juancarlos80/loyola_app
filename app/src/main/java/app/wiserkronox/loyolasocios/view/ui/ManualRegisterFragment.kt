@@ -2,7 +2,6 @@ package app.wiserkronox.loyolasocios.view.ui
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,16 +10,13 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import app.wiserkronox.loyolasocios.R
-import app.wiserkronox.loyolasocios.service.LoyolaApplication
-import app.wiserkronox.loyolasocios.service.model.User
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import android.util.Log
 
 class ManualRegisterFragment : Fragment() {
 
-    private lateinit var email_1: EditText
-    private lateinit var password_1: EditText
-    private lateinit var password_2: EditText
+    private lateinit var emailEdit: EditText
+    private lateinit var passwordEdit: EditText
+    private lateinit var passwordEditC: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,10 +29,9 @@ class ManualRegisterFragment : Fragment() {
         // Inflate the layout for this fragment
         val root: View = inflater.inflate(R.layout.fragment_manual_register, container, false)
 
-        email_1 = root.findViewById(R.id.edit_email_1)
-
-        password_1 = root.findViewById(R.id.edit_password_1)
-        password_2 = root.findViewById(R.id.edit_password_2)
+        emailEdit = root.findViewById(R.id.edit_email_1)
+        passwordEdit = root.findViewById(R.id.edit_password_1)
+        passwordEditC = root.findViewById(R.id.edit_password_2)
 
 
         val btnCancel = root.findViewById<Button>(R.id.btn_cancel)
@@ -49,11 +44,13 @@ class ManualRegisterFragment : Fragment() {
             validateRegister()
         }
 
+        Log.d("FX", "update")
+
         return root
     }
 
     fun validateRegister(){
-        if( TextUtils.isEmpty(email_1.text) ){
+        if( TextUtils.isEmpty(emailEdit.text) ){
             Toast.makeText(
                 activity,
                 "El correo electronico no puede estar vacio",
@@ -62,7 +59,7 @@ class ManualRegisterFragment : Fragment() {
             return
         }
 
-        if ( !android.util.Patterns.EMAIL_ADDRESS.matcher(email_1.text).matches() ){
+        if ( !android.util.Patterns.EMAIL_ADDRESS.matcher(emailEdit.text).matches() ){
             Toast.makeText(
                 activity,
                 "El correo electrónico no es una direccion válida o contiene caracteres no permitidos",
@@ -71,7 +68,7 @@ class ManualRegisterFragment : Fragment() {
             return
         }
 
-        if( TextUtils.isEmpty(password_1.text) ){
+        if( TextUtils.isEmpty(passwordEdit.text) ){
             Toast.makeText(
                 activity,
                 "Debe definir una contraseñara el registro de su cuenta",
@@ -80,7 +77,7 @@ class ManualRegisterFragment : Fragment() {
             return
         }
 
-        if( password_1.text.toString().length < 6 ){
+        if( passwordEdit.text.toString().length < 6 ){
             Toast.makeText(
                 activity,
                 "La contraseña debe tener al menos 6 caracteres",
@@ -89,7 +86,7 @@ class ManualRegisterFragment : Fragment() {
             return
         }
 
-        if( TextUtils.isEmpty(password_2.text) ){
+        if( TextUtils.isEmpty(passwordEditC.text) ){
             Toast.makeText(
                 activity,
                 "La confirmacion de la contraseña no puede estar vacia",
@@ -98,13 +95,15 @@ class ManualRegisterFragment : Fragment() {
             return
         }
 
-        if( !password_1.text.toString().equals(password_2.text.toString()) ){
+        if( !passwordEdit.text.toString().equals(passwordEditC.text.toString()) ){
             Toast.makeText(activity, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
             return
         }
 
+
+        (activity as MainActivity).checkLocalUser( emailEdit.text.toString(), passwordEdit.text.toString() )
         //(activity as MainActivity).goLoader()
-        GlobalScope.launch {
+        /*GlobalScope.launch {
             val user_reg = LoyolaApplication.getInstance()?.repository?.getUserByEmail(email_1.text.toString())
             if( user_reg != null ){
                 (activity as MainActivity).goFailLogin("El correo electrónico que intenta registrar ya esta en uso")
@@ -122,7 +121,6 @@ class ManualRegisterFragment : Fragment() {
 
                 (activity as MainActivity).registerManualUser(user)
             }
-        }
+        }*/
     }
-
 }

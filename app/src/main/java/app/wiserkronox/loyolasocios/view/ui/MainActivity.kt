@@ -494,6 +494,55 @@ class MainActivity : AppCompatActivity() {
         LoyolaApplication.getInstance()?.user = null
     }
 
+    fun checkLocalUser(email: String, password: String){
+        goLoader()
+        GlobalScope.launch {
+            val userReg = LoyolaApplication.getInstance()?.repository?.getUserByEmail(email)
+            if( userReg != null ){
+                goFailLogin("El correo electrónico que intenta registrar ya esta en uso")
+            } else {
+                checkServerUser(email, password)
+            }
+        }
+    }
+
+    private fun checkServerUser(email: String, password: String){
+        val userRest = UserRest(this)
+        val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.POST, userRest.postCheckMail(),
+                userRest.getUserEmailJson(email),
+                { response ->
+                    Log.d(TAG, "Response is: $response")
+                    if (response.getBoolean("success")) {
+                        if( response.getString("estado") == "sin_uso"){
+                            val user = User()
+                            user.email = email
+                            user.password = password
+                            user.state = User.REGISTER_LOGIN_STATE
+                            registerManualUser(user)
+                        } else {
+                            showMessage("El correo electronico ya esta registrado en el servidor")
+                            goManualRegister()
+                        }
+                    } else {
+                        showMessage("No se pudo consultar con el servidor")
+                        goWithoutSession()
+                    }
+                },
+                { error ->
+                    Log.e(TAG, error.toString())
+                    Log.e(TAG, userRest.getUserLoginURL())
+                    Log.e(TAG, error.message.toString())
+                    error.printStackTrace()
+                    showMessage("Error de conexión con el servidor")
+                    goWithoutSession()
+                }
+        )
+
+        // Add the request to the RequestQueue.
+        LoyolaService.getInstance(this).addToRequestQueue(jsonObjectRequest)
+    }
+
     /**********************************************************************************************/
     //Operaciones de Red
     /**********************************************************************************************/

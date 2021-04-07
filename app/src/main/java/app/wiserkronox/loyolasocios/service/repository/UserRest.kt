@@ -13,6 +13,7 @@ class UserRest (val context: Context){
         var GET_USER_STATUS = "get_user_status.php"
         var GET_USER_LOGIN = "get_user_login.php"
         var SEND_MAIL_RECOVERY = "send_mail_recovery.php"
+        var CHECK_MAIL = "check_mail.php"
     }
 
     fun getUserDataURL(): String {
@@ -43,6 +44,12 @@ class UserRest (val context: Context){
         return context.getString(R.string.host_service)+
                 context.getString(R.string.home_service)+
                 SEND_MAIL_RECOVERY
+    }
+
+    fun postCheckMail(): String {
+        return context.getString(R.string.host_service)+
+                context.getString(R.string.home_service)+
+                CHECK_MAIL
     }
 
     fun getUserDataJson(user: User, upDate: Boolean): JSONObject? {
