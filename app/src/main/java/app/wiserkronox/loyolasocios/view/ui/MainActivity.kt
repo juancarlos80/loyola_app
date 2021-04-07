@@ -125,6 +125,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if( !google_request ) {
+            Log.d(TAG, "NO es request de google")
             goWithoutSession()
         }
     }
@@ -199,15 +200,15 @@ class MainActivity : AppCompatActivity() {
                 getUserByOauthUid(account.id ?: "")
             if( user_local == null ){
                 //Aqui buscar en la red si el usuario ya esta en el servidor
-                //getUserFromServer("", "", account.id ?:"")
-                val user = User()
+                getUserFromServer("", "", account.id ?:"", account)
+                /*val user = User()
                 user.oauth_provider = "google"
                 user.oauth_uid = account.id ?:""
                 user.names = account.givenName?:""
                 user.last_name_1 = account.familyName ?: ""
                 user.email = account.email?:""
                 user.picture = account.photoUrl.toString()
-                registerGoogleUser(user)
+                registerGoogleUser(user)*/
             } else {
                 if( user_local.state == "") {
                     //Actualizamos el usuario si es primera vez
@@ -269,7 +270,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 if( isOnline() ) {
                     Log.d(MainActivity.TAG, "no hay usuario buscando en el servidor")
-                    getUserFromServer(email, password, "")
+                    getUserFromServer(email, password, "", null)
                 } else {
                  showMessage("Si ya esta registrado, debe estar conectado a Internet para buscar su información")
                 }
@@ -280,7 +281,7 @@ class MainActivity : AppCompatActivity() {
     fun updateByDataJSON(email: String, oauth_uid: String, userServer: User) {
         goLoader()
         GlobalScope.launch {
-            val userLocal: User?
+            var userLocal: User?
             if( oauth_uid != "" ) {
                 userLocal = LoyolaApplication.getInstance()?.repository?.getUserByOauthUid(oauth_uid)
             } else {
@@ -294,6 +295,9 @@ class MainActivity : AppCompatActivity() {
             } else {
                 if (userLocal == null) {
                     //Insertar el nuevo usuario del servidor
+                    registerManualUser( userServer )
+                } else {
+                    userLocal = (UserRest(baseContext)).updateUserFromServer(userLocal, userServer)
                     registerManualUser( userServer )
                 }
             }
@@ -500,7 +504,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun getUserFromServer(email: String, password: String, oauth_uid: String){
+    fun getUserFromServer(email: String, password: String, oauth_uid: String, account: GoogleSignInAccount?){
         val userRest = UserRest(this)
         val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.POST, userRest.getUserLoginURL(),
@@ -515,9 +519,20 @@ class MainActivity : AppCompatActivity() {
                             showMessage("No se pudo descargar los datos del socio del servidor")
                         }
                     } else {
-                        Log.e(TAG, "No se encontro en la red")
-                        showMessage("No se encontro el usuario")
-                        goWithoutSession()
+                        if( account != null ){
+                            val user = User()
+                            user.oauth_provider = "google"
+                            user.oauth_uid = account.id ?:""
+                            user.names = account.givenName?:""
+                            user.last_name_1 = account.familyName ?: ""
+                            user.email = account.email?:""
+                            user.picture = account.photoUrl.toString()
+                            registerGoogleUser(user)
+                        } else {
+                            Log.e(TAG, "No se encontro en la red")
+                            showMessage("No se encontro el usuario")
+                            goWithoutSession()
+                        }
                     }
                 },
                 { error ->
