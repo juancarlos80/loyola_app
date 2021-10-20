@@ -91,10 +91,6 @@ class MainActivity : AppCompatActivity() {
 
         lifecycle.addObserver(MainObserver())
 
-        //Primero se verifica si no esta registrado con google
-        //getGoogleStatus()
-        //getUserFromServerByEmailPassord2("hola", "dos");
-
     }
 
     override fun onResume() {
@@ -165,7 +161,6 @@ class MainActivity : AppCompatActivity() {
         }
         val singInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(singInIntent, RC_SIGN_IN)
-        //resultLauncher.launch( singInIntent )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -201,14 +196,7 @@ class MainActivity : AppCompatActivity() {
             if( user_local == null ){
                 //Aqui buscar en la red si el usuario ya esta en el servidor
                 getUserFromServer("", "", account.id ?:"", account)
-                /*val user = User()
-                user.oauth_provider = "google"
-                user.oauth_uid = account.id ?:""
-                user.names = account.givenName?:""
-                user.last_name_1 = account.familyName ?: ""
-                user.email = account.email?:""
-                user.picture = account.photoUrl.toString()
-                registerGoogleUser(user)*/
+
             } else {
                 if( user_local.state == "") {
                     //Actualizamos el usuario si es primera vez
@@ -264,7 +252,6 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch {
             val user = LoyolaApplication.getInstance()?.repository?.getUserEmailPassword(email, password)
             if( user != null ) {
-                //Log.d(MainActivity.TAG, "user" + user.password)
                 saveManualUserLogin(user.email, user.password)
                 defineDestination(user)
             } else {
@@ -287,8 +274,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 userLocal = LoyolaApplication.getInstance()?.repository?.getUserByEmail(email)
             }
-
-            //val userServer = userRest.getUserFromJSON( response.getJSONObject("user"))
 
             if( userServer == null){
                 showMessage("No se pudo descargar los datos del socio del servidor")
@@ -601,7 +586,7 @@ class MainActivity : AppCompatActivity() {
     fun uploadUserDataServer(user: User){
         val userRest = UserRest(this)
         val jsonObjectRequest = JsonObjectRequest(
-                Request.Method.POST, userRest.getUserDataURL(),
+                Request.Method.POST, userRest.setUserDataURL(),
                 userRest.getUserDataJson(user, updateDataUser),
                 { response ->
 
@@ -620,7 +605,7 @@ class MainActivity : AppCompatActivity() {
                 },
                 { error ->
                     Log.e(TAG, error.toString())
-                    Log.e(TAG, userRest.getUserDataURL())
+                    Log.e(TAG, userRest.setUserDataURL())
                     Log.e(TAG, error.message.toString())
                     error.printStackTrace()
                     showMessage("Error de conexión con el servidor")

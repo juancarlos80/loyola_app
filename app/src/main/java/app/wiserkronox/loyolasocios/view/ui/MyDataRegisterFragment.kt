@@ -151,9 +151,9 @@ class MyDataRegisterFragment : Fragment() {
             return
         }
 
-        if( phone_number.text.toString().length != 7 ||
+        if( phone_number.text.toString().length < 8 ||
                 ( !phone_number.text.toString().startsWith("6") && !phone_number.text.toString().startsWith("7") ) ){
-            Toast.makeText(activity, "El número de telefono debe ser de 7 digitos y empezar con 6 o 7", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, "El número de telefono debe ser de 8 digitos y empezar con 6 o 7", Toast.LENGTH_LONG).show()
             return
         }
 
